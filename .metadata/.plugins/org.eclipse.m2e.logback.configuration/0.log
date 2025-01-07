@@ -234,3 +234,16 @@
 2025-01-06 15:56:58,062 [Worker-48: Launching Main] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory D:\scale-connector-java-server\scaleconnector_java\scaleconnector_service\src\main\resources
 2025-01-06 15:56:58,065 [Worker-48: Launching Main] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (Cp1252 actually) to copy filtered resources, i.e. build is platform dependent!
 2025-01-06 15:56:58,066 [Worker-48: Launching Main] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory D:\scale-connector-java-server\scaleconnector_java\scaleconnector_service\src\test\resources
+2025-01-07 09:03:14,743 [Worker-3: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is out-of-date. Trying to update.
+2025-01-07 11:05:33,596 [Worker-78: Building] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (Cp1252 actually) to copy filtered resources, i.e. build is platform dependent!
+2025-01-07 11:05:33,599 [Worker-78: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory D:\scale-connector-java-server\scaleconnector_java\scaleconnector_service\src\main\resources
+2025-01-07 11:05:33,601 [Worker-78: Building] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (Cp1252 actually) to copy filtered resources, i.e. build is platform dependent!
+2025-01-07 11:05:33,602 [Worker-78: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory D:\scale-connector-java-server\scaleconnector_java\scaleconnector_service\src\test\resources
+2025-01-07 11:09:16,002 [Worker-92: Building] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (Cp1252 actually) to copy filtered resources, i.e. build is platform dependent!
+2025-01-07 11:09:16,004 [Worker-92: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory D:\scale-connector-java-server\scaleconnector_java\scaleconnector_service\src\main\resources
+2025-01-07 11:09:16,005 [Worker-92: Building] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (Cp1252 actually) to copy filtered resources, i.e. build is platform dependent!
+2025-01-07 11:09:16,006 [Worker-92: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory D:\scale-connector-java-server\scaleconnector_java\scaleconnector_service\src\test\resources
+2025-01-07 11:15:23,238 [Worker-98: Building] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (Cp1252 actually) to copy filtered resources, i.e. build is platform dependent!
+2025-01-07 11:15:23,239 [Worker-98: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory D:\scale-connector-java-server\scaleconnector_java\scaleconnector_service\src\main\resources
+2025-01-07 11:15:23,240 [Worker-98: Building] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (Cp1252 actually) to copy filtered resources, i.e. build is platform dependent!
+2025-01-07 11:15:23,241 [Worker-98: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory D:\scale-connector-java-server\scaleconnector_java\scaleconnector_service\src\test\resources

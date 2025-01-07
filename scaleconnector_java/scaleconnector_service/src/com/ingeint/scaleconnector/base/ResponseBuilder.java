@@ -25,6 +25,7 @@
 package com.ingeint.scaleconnector.base;
 
 import java.security.InvalidParameterException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -71,88 +72,74 @@ public class ResponseBuilder {
 			break;
 
 		case READ_PORT:
+		    try {
+		        // Parse and validate parameters
+		        HashMap<String, String> parameters = request.getParameters();
+		        String serialPort = parameters.get("serialport").trim();
+		        int baud = Integer.parseInt(parameters.get("baud").trim());
+		        int dataBits = Integer.parseInt(parameters.get("databits").trim());
+		        int stopBits = Integer.parseInt(parameters.get("stopbits").trim());
+		        int parity = Integer.parseInt(parameters.get("parity").trim());
+		        int byteCount = Integer.parseInt(parameters.get("bytecount").trim());
+		        int readings = Integer.parseInt(parameters.get("readings").trim());
+		        int startCut = Integer.parseInt(parameters.get("startcut").trim());
+		        int endCut = Integer.parseInt(parameters.get("endcut").trim());
+		        int stabilityValue = Integer.parseInt(parameters.get("stability").trim());
+		        int stabilityValuePosition = Integer.parseInt(parameters.get("stabilitypos").trim());
+		        int floatingPoint = Integer.parseInt(parameters.get("floatingpoint").trim());
 
-			try {
-				HashMap<String, String> parameters = request.getParameters();
+		        String startCharText = parameters.get("startcharacter");
+		        String endCharText = parameters.get("endcharacter");
 
-				if (parameters.get("bytecount") == null)
-					throw new InvalidParameterException("[bytecount]");
-				else if (parameters.get("baud") == null)
-					throw new InvalidParameterException("[baud]");
-				else if (parameters.get("databits") == null)
-					throw new InvalidParameterException("[databits]");
-				else if (parameters.get("stopbits") == null)
-					throw new InvalidParameterException("[stopbits]");
-				else if (parameters.get("parity") == null)
-					throw new InvalidParameterException("[parity]");
-				else if (parameters.get("serialport") == null)
-					throw new InvalidParameterException("[serialport]");
-				else if (parameters.get("startcharacter") == null)
-					throw new InvalidParameterException("[startcharacter]");
-				else if (parameters.get("endcharacter") == null)
-					throw new InvalidParameterException("[endcharacter]");
-				else if (parameters.get("readings") == null)
-					throw new InvalidParameterException("[readings]");
-				else if (parameters.get("stabilitypos") == null)
-					throw new InvalidParameterException("[stabilitypos]");
-				else if (parameters.get("floatingpoint") == null)
-					throw new InvalidParameterException("[floatingpoint]");
-				else if (parameters.get("stability") == null)
-					throw new InvalidParameterException("[stability]");
-				else if (parameters.get("startcut") == null)
-					throw new InvalidParameterException("[startcut]");
-				else if (parameters.get("endcut") == null)
-					throw new InvalidParameterException("[endcut]");			
+		        // Open ScaleConnector
+		        ScaleConnector scaleConnector = new ScaleConnector(serialPort, baud, dataBits, stopBits, parity);
+		        scaleConnector.setByteCount(byteCount);
+		        scaleConnector.setReadings(readings);
 
-				int baud = Integer.parseInt(parameters.get("baud").toString().trim());
-				int dataBits = Integer.parseInt(parameters.get("databits").toString().trim());
-				int stopBits = Integer.parseInt(parameters.get("stopbits").toString().trim());
-				int parity = Integer.parseInt(parameters.get("parity").toString().trim());
-				int byteCount = Integer.parseInt(parameters.get("bytecount").toString().trim());
-				int startCharacter = Integer.parseInt(parameters.get("startcharacter").toString().trim());
-				int endCharacter = Integer.parseInt(parameters.get("endcharacter").toString().trim());
-				int readings = Integer.parseInt(parameters.get("readings").toString().trim());
-				String serialPort = parameters.get("serialport").toString().trim();
-				int sIndicatorPos = Integer.parseInt(parameters.get("stabilitypos").toString().trim());
-				int fPoint = Integer.parseInt(parameters.get("floatingpoint").toString().trim());
-				int sIndicator = Integer.parseInt(parameters.get("stability").toString().trim());
-				int startCut = Integer.parseInt(parameters.get("startcut").toString().trim());
-				int endCut = Integer.parseInt(parameters.get("endcut").toString().trim());
+		        // Determine dynamic start and end characters if empty
+		        if (startCharText.isEmpty() || endCharText.isEmpty()) {
+		            String rawValue = scaleConnector.readValue();
+		            if (startCharText.isEmpty()) startCharText = rawValue.substring(0, 1);
+		            if (endCharText.isEmpty()) endCharText = rawValue.substring(rawValue.length() - 1);
+		        }
+		        scaleConnector.setStartCharacter(startCharText.charAt(0));
+		        scaleConnector.setEndCharacter(endCharText.charAt(0));
+		        scaleConnector.setStartCutPosition(startCut);
+		        scaleConnector.setEndCutPosition(endCut);
+		        scaleConnector.setStabilityValuePosition(stabilityValuePosition);
+		        scaleConnector.setStabilityValue(stabilityValue);
+		        scaleConnector.setFloatingPoint(floatingPoint);
 
-				logger.info(String.format("[serialport=%s,baud=%d,databits=%d,stopbits=%d,parity=%d,startcharacter=%d,endcharacter=%d,startcut=%d,endcut=%d,bytecount=%d,readings=%d,stabilitypos=%d,stability=%d,floatingpoint=%d]", serialPort, baud, dataBits, stopBits, parity, startCharacter,
-						endCharacter, startCut, endCut, byteCount, readings, sIndicatorPos, sIndicator, fPoint));
+		        // Read value and check stability
+		        byte[] rawBytes = scaleConnector.readBytes();
+		        logger.info("Raw bytes read: " + Arrays.toString(rawBytes));
 
-				ScaleConnector sc = new ScaleConnector(serialPort, baud, dataBits, stopBits, parity);
-				sc.setByteCount(byteCount);
-				sc.setStartCharacter(0);
-				sc.setEndCharacter(1);
-				sc.setStartCutPosition(startCut);
-				sc.setEndCutPosition(endCut);
-				sc.setStabilityValuePosition(sIndicatorPos);
-				sc.setStabilityValue(sIndicator);
-				sc.setFloatingPoint(fPoint);
-				sc.setReadings(readings);
+		        String value = scaleConnector.readValue();
+		        boolean isStable = scaleConnector.isStableValue();
 
-				HashMap<String, String> dataResponse = new HashMap<String, String>();
-				dataResponse.put("value", sc.readValue());
-				dataResponse.put("isstable", Boolean.toString(sc.isStableValue()));
-				dataResponse.put("serialport", serialPort);
+		        if (value.isEmpty()) {
+		            response.setServerMessage("No data read from serial port");
+		            response.setStatus(ResponseStatus.ERROR);
+		        } else {
+		            // Prepare response
+		            HashMap<String, String> dataResponse = new HashMap<>();
+		            dataResponse.put("value", value);
+		            dataResponse.put("isstable", Boolean.toString(isStable));
+		            dataResponse.put("serialport", serialPort);
 
-				response.setServerMessage("Query value");
-				response.setStatus(ResponseStatus.SUCCESS);
-				response.setData(dataResponse);
-			} catch (InvalidParameterException e) {
-				logger.severe("Invalid Parameters");
-				response.setServerMessage("Invalid Parameters " + e.getMessage());
-				response.setStatus(ResponseStatus.ERROR);
-				e.printStackTrace();
-			} catch (Exception e) {
-				logger.severe("Error reading serial port");
-				response.setServerMessage("Error reading serial port");
-				response.setStatus(ResponseStatus.ERROR);
-				e.printStackTrace();
-			}
-			break;
+		            response.setServerMessage("Query value");
+		            response.setStatus(ResponseStatus.SUCCESS);
+		            response.setData(dataResponse);
+		        }
+		    } catch (Exception e) {
+		        logger.severe("Error reading serial port: " + e.getMessage());
+		        response.setServerMessage("Error reading serial port");
+		        response.setStatus(ResponseStatus.ERROR);
+		        e.printStackTrace();
+		    }
+		    break;
+
+
 
 		default:
 			response.setServerMessage("Unsupported RequestType");

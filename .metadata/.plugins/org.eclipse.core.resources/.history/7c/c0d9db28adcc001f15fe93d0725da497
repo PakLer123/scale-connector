@@ -1,0 +1,170 @@
+/**
+ * This file is part of Scale Connector.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * 
+ * Copyright (C) 2015 INGEINT <http://www.ingeint.com>.
+ * Copyright (C) Contributors.
+ * 
+ * Contributors:
+ *    - 2015 Saúl Piña <spina@ingeint.com>.
+ */
+
+package com.ingeint.scaleconnector.base;
+
+import java.security.InvalidParameterException;
+import java.util.Calendar;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.logging.Logger;
+
+import com.ingeint.scaleconnector.base.Request;
+import com.ingeint.scaleconnector.base.Response;
+import com.ingeint.scaleconnector.base.ResponseStatus;
+
+import jssc.SerialPortTimeoutException;
+
+/**
+ * Build the response
+ */
+public class ResponseBuilder {
+	private static Logger logger = Logger.getLogger(ResponseBuilder.class.getName());
+
+	/**
+	 * Creates a response depending on the request
+	 * 
+	 * @param request
+	 *            Request from client
+	 * @return Response to send
+	 */
+	public synchronized Response build(Request request) {
+		Response response = new Response();
+
+		switch (request.getType()) {
+		case TEST:
+			response.setServerMessage("Successful test");
+			response.setStatus(ResponseStatus.SUCCESS);
+			break;
+
+		case FEATURES:
+			HashMap<String, String> data = new HashMap<String, String>();
+			Enumeration<Object> features = ScaleConectorInfo.getKeys();
+			while (features.hasMoreElements()) {
+				String key = (String) features.nextElement();
+				data.put(key, ScaleConectorInfo.get(key));
+			}
+			response.setServerMessage("Server features");
+			response.setStatus(ResponseStatus.SUCCESS);
+			response.setData(data);
+			break;
+
+		case READ_PORT:
+		    try {
+		        // Get and validate parameters from the request
+		        HashMap<String, String> parameters = request.getParameters();
+
+		        // Ensure all required parameters are present
+		        String[] requiredParams = {
+		            "baud", "databits", "stopbits", "parity", "bytecount", "startcharacter",
+		            "endcharacter", "readings", "serialport", "stabilitypos", "floatingpoint",
+		            "stability", "startcut", "endcut"
+		        };
+		        for (String param : requiredParams) {
+		            if (parameters.get(param) == null) {
+		                throw new InvalidParameterException("Missing parameter: " + param);
+		            }
+		        }
+
+		        // Parse and assign parameters
+		        int baud = Integer.parseInt(parameters.get("baud").trim());
+		        int dataBits = Integer.parseInt(parameters.get("databits").trim());
+		        int stopBits = Integer.parseInt(parameters.get("stopbits").trim());
+		        int parity = Integer.parseInt(parameters.get("parity").trim());
+		        int byteCount = Integer.parseInt(parameters.get("bytecount").trim());
+		        int startCharacter = Integer.parseInt(parameters.get("startcharacter").trim());
+		        int endCharacter = Integer.parseInt(parameters.get("endcharacter").trim());
+		        int readings = Integer.parseInt(parameters.get("readings").trim());
+		        String serialPort = parameters.get("serialport").trim();
+		        int stabilityValuePosition = Integer.parseInt(parameters.get("stabilitypos").trim());
+		        int floatingPoint = Integer.parseInt(parameters.get("floatingpoint").trim());
+		        int stabilityValue = Integer.parseInt(parameters.get("stability").trim());
+		        int startCut = Integer.parseInt(parameters.get("startcut").trim());
+		        int endCut = Integer.parseInt(parameters.get("endcut").trim());
+
+		        logger.info(String.format(
+		            "Received READ_PORT request: serialport=%s, baud=%d, databits=%d, stopbits=%d, parity=%d, bytecount=%d, startcharacter=%d, endcharacter=%d, readings=%d, stabilitypos=%d, floatingpoint=%d, stability=%d, startcut=%d, endcut=%d",
+		            serialPort, baud, dataBits, stopBits, parity, byteCount, startCharacter, endCharacter, readings,
+		            stabilityValuePosition, floatingPoint, stabilityValue, startCut, endCut
+		        ));
+
+		        // Initialize ScaleConnector with parsed parameters
+		        ScaleConnector scaleConnector = new ScaleConnector(serialPort, baud, dataBits, stopBits, parity);
+		        scaleConnector.setByteCount(byteCount);
+		        scaleConnector.setStartCharacter(startCharacter);
+		        scaleConnector.setEndCharacter(endCharacter);
+		        scaleConnector.setReadings(readings);
+		        scaleConnector.setStabilityValuePosition(stabilityValuePosition);
+		        scaleConnector.setFloatingPoint(floatingPoint);
+		        scaleConnector.setStabilityValue(stabilityValue);
+		        scaleConnector.setStartCutPosition(startCut);
+		        scaleConnector.setEndCutPosition(endCut);
+
+		        // Prepare response data
+		        HashMap<String, String> dataResponse = new HashMap<>();
+		        try {
+		            String value = scaleConnector.readValue();
+		            boolean isStable = scaleConnector.isStableValue();
+
+		            logger.info("Processed value: " + value);
+		            logger.info("Stability status: " + isStable);
+
+		            // Add results to response data
+		            dataResponse.put("value", value != null ? value : "");
+		            dataResponse.put("isstable", Boolean.toString(isStable));
+		            dataResponse.put("serialport", serialPort);
+
+		            response.setServerMessage("Query value");
+		            response.setStatus(ResponseStatus.SUCCESS);
+		            response.setData(dataResponse);
+		        } catch (Exception e) {
+		            logger.severe("Error reading value from ScaleConnector: " + e.getMessage());
+		            e.printStackTrace();
+		            response.setServerMessage("Error reading serial port");
+		            response.setStatus(ResponseStatus.ERROR);
+		        }
+		    } catch (InvalidParameterException e) {
+		        logger.severe("Invalid Parameters: " + e.getMessage());
+		        response.setServerMessage("Invalid Parameters " + e.getMessage());
+		        response.setStatus(ResponseStatus.ERROR);
+		    } catch (Exception e) {
+		        logger.severe("Unexpected error: " + e.getMessage());
+		        response.setServerMessage("Error processing request");
+		        response.setStatus(ResponseStatus.ERROR);
+		        e.printStackTrace();
+		    }
+		    break;
+
+
+		default:
+			response.setServerMessage("Unsupported RequestType");
+			response.setStatus(ResponseStatus.NOT_UNDERSTOOD);
+			break;
+		}
+
+		response.setDate(Calendar.getInstance().getTime());
+		response.setRequest(request);
+		return response;
+	}
+}
