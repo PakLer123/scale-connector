@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry including="features.properties|image/|image/logo.png|image/logo16px.png|locale/|locale/en_US.properties|locale/es_VE.properties" kind="src" path="resource"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/miglayout-4.0.jar"/>
+	<classpathentry kind="lib" path="lib/substance-4.3.jar"/>
+	<classpathentry kind="lib" path="lib/jline-1.0.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/scaleconnector_core"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/scaleconnector_service"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/scaleconnector_client"/>
+	<classpathentry kind="lib" path="D:/Downloads/jSerialComm-2.11.0.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

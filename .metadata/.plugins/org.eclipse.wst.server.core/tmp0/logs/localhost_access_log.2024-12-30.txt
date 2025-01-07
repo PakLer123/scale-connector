@@ -1,0 +1,13 @@
+127.0.0.1 - - [30/Dec/2024:14:45:20 +0700] "GET / HTTP/1.1" 404 951
+127.0.0.1 - - [30/Dec/2024:14:45:24 +0700] "GET /scaleconnector_webservice/ HTTP/1.1" 200 5808
+127.0.0.1 - - [30/Dec/2024:14:45:24 +0700] "GET /scaleconnector_webservice/jquery-2.0.3.js HTTP/1.1" 200 250971
+127.0.0.1 - - [30/Dec/2024:14:45:24 +0700] "GET /scaleconnector_webservice/image/logo.png HTTP/1.1" 200 8815
+127.0.0.1 - - [30/Dec/2024:14:45:29 +0700] "GET /scaleconnector_webservice/ HTTP/1.1" 200 5808
+127.0.0.1 - - [30/Dec/2024:14:45:29 +0700] "GET /scaleconnector_webservice/jquery-2.0.3.js HTTP/1.1" 200 250971
+127.0.0.1 - - [30/Dec/2024:14:45:29 +0700] "GET /scaleconnector_webservice/image/logo.png HTTP/1.1" 200 8815
+127.0.0.1 - - [30/Dec/2024:14:45:29 +0700] "GET /scaleconnector_webservice/image/logo16px.png HTTP/1.1" 200 609
+127.0.0.1 - - [30/Dec/2024:14:45:40 +0700] "GET /scaleconnector_webservice/?locale=en_US HTTP/1.1" 200 5770
+127.0.0.1 - - [30/Dec/2024:14:45:57 +0700] "GET /scaleconnector_webservice/get_response?requestType=READ_PORT&serialport=COM5&baud=9600&databits=8&stopbits=1&parity=0&bytecount=20&startcharacter=2&endcharacter=3&readings=1&stabilitypos=null&stability=null&floatingpoint=null&startcut=null&endcut=null HTTP/1.1" 200 121
+127.0.0.1 - - [30/Dec/2024:14:47:30 +0700] "GET /scaleconnector_webservice/get_response?requestType=READ_PORT&serialport=COM5&baud=9600&databits=8&stopbits=1&parity=0&bytecount=20&startcharacter=2&endcharacter=3&readings=1&stabilitypos=null&stability=null&floatingpoint=null&startcut=null&endcut=null HTTP/1.1" 200 121
+127.0.0.1 - - [30/Dec/2024:14:47:32 +0700] "GET /scaleconnector_webservice/get_response?requestType=READ_PORT&serialport=COM5&baud=9600&databits=8&stopbits=1&parity=0&bytecount=20&startcharacter=2&endcharacter=3&readings=1&stabilitypos=null&stability=null&floatingpoint=null&startcut=null&endcut=null HTTP/1.1" 200 121
+127.0.0.1 - - [30/Dec/2024:14:47:42 +0700] "GET /scaleconnector_webservice/get_response?requestType=READ_PORT&serialport=COM4&baud=9600&databits=8&stopbits=1&parity=0&bytecount=20&startcharacter=2&endcharacter=3&readings=1&stabilitypos=null&stability=null&floatingpoint=null&startcut=null&endcut=null HTTP/1.1" 200 121

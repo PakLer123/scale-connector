@@ -1,0 +1,7 @@
+INDEX VERSION 1.4+D:\scale-connector-java-server\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+556587339.index
+3392952278.index
+1803913481.index
+3971662387.index
+2235234990.index
+514187733.index

@@ -1,0 +1,9 @@
+APPLICATION TO TEST THE CONNECTION WITH SCALE
+
+COMMANDS
+  -version	Displays the version of the application
+     -help	Displays the commands that can be used
+     -host	Displays the values of the server TCP
+    -scale	Displays the values of the scales
+    -ports	Displays the serial ports
+   -server	Application server console starts

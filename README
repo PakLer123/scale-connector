@@ -1,0 +1,48 @@
+scaleconnector_java
+===================
+
+Description
+-----------
+The Scale Connector For iDempiere project allows in first place, the materials 
+weighing from iDempiere ERP Open Source, thus providing the tools 
+necessary to optimize the receipt of raw material and dispatch of 
+finished product in the productive chain of a company, saving time 
+and resources.
+
+ScaleConnector can be configured to sync with any device or sensor 
+(temperature, humidity, pressure, weighing, accountant, etc.) that 
+communicate through the RS-232 serial port.
+
+
+Features
+--------
+- Copyright: 2015 INGEINT (http://www.ingeint.com)
+- Repository: https://bitbucket.org/ingeint/scaleconnector_java
+- License: GPL 2
+- Language: Java
+- IDE: Eclipse
+- Branch: dev
+- Linux and Windows operating systems
+- Java 7
+- Designed to read RS-232 serial port
+- CPU Architecture x86, x86_64
+- Apache Tomcat 7
+
+
+Documentation
+-------------
+- http://wiki.idempiere.org/en/Plugin:_Scale_Connector
+
+
+Linux Commands
+--------------
+- setserial -g /dev/ttyS*
+- ls -l /dev/ttyS* 
+- gpasswd -a <user> dialout,
+- gpasswd -a <user> uucp
+
+
+Web Services
+------------
+- URL: http://localhost:8080/scaleconnector_webservice
+- URL Service: http://localhost:8080/scaleconnector_webservice/get_response
