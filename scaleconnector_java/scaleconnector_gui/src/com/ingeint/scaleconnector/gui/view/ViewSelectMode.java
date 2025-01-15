@@ -47,7 +47,7 @@ public class ViewSelectMode extends JFrame {
         System.out.println("Initializing ViewSelectMode...");
         
         // Set font
-        setUIFont(new FontUIResource(new Font("Arial", Font.PLAIN, 12)));
+        setUIFont(new FontUIResource(new Font("Segoe UI", Font.PLAIN, 12)));
 
         // Calculate dynamic dimensions
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

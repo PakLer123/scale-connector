@@ -24,35 +24,28 @@
 
 package com.ingeint.scaleconnector.gui.app;
 
-import java.awt.BorderLayout;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JToolBar;
 import javax.swing.UIManager;
 
 import jline.ConsoleReader;
 import com.fazecast.jSerialComm.*;
-import com.formdev.flatlaf.FlatLightLaf;
 
-import org.jvnet.substance.SubstanceLookAndFeel;
+import com.formdev.flatlaf.FlatLightLaf;
 
 import com.ingeint.scaleconnector.base.ScaleConnector;
 import com.ingeint.scaleconnector.gui.console.ConsoleServerMode;
 import com.ingeint.scaleconnector.gui.controller.ControllerViewSelectMode;
 import com.ingeint.scaleconnector.gui.feature.SCUIFeature;
 import com.ingeint.scaleconnector.gui.feature.SCUILocale;
+import com.ingeint.scaleconnector.gui.theme.CustomFlatLaf;
 
 public class Main {
 
@@ -362,15 +355,16 @@ public class Main {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
 		try {
-			//SubstanceLookAndFeel.setSkin("org.jvnet.substance.skin.CremeSkin");
-			UIManager.setLookAndFeel(new FlatLightLaf());
-	        System.out.println("Substance Look-and-Feel applied.");
+			UIManager.setLookAndFeel(new CustomFlatLaf());
+			//UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatDarkLaf());
+	        System.out.println("FlatLaf look and feel applied");
 		} catch(Exception e) {
-			System.err.println("Error applying substance Look-and-feel: " + e.getMessage());
+			System.err.println("Error applying Flatlaf Look-and-feel: " + e.getMessage());
 			e.printStackTrace();
 		}
 		new ControllerViewSelectMode();
 	}
+	
 
 	private static void loadFeaturesUI() {
 		try {
