@@ -329,7 +329,7 @@ public class ViewServerMode extends JFrame {
 		pnlScale.add(lblPortValue, "span 3, grow,  height 70, wrap");
 		pnlScale.add(lblStatusValue, "span 3, grow,  height 40, wrap");
 		
-		pnlScale.add(btnToggleStream, "grow, span 2, wrap");
+		pnlScale.add(btnToggleStream, "grow, span 1 2, wrap, height 40");
 		
 		pnlScale.add(lblFullString, "grow");
 		pnlScale.add(txtFullString, "span 2, grow, wrap");
