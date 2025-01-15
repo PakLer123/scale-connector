@@ -1,3 +1,0 @@
-INDEX VERSION 1.131
-D:\scale-connector-java-server\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2922536948.index
-\scaleconnector_webservice\src
