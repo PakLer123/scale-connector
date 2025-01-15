@@ -30,6 +30,7 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -43,6 +44,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
@@ -58,7 +60,7 @@ public class ViewServerMode extends JFrame {
 
 	private static final long serialVersionUID = -733360274400948603L;
 
-	private List<JButton> buttons;
+	private List<AbstractButton> buttons;
 	private List<JMenuItem> menuItems;
 	private JPanel pnlCentral;
 	private JPanel pnlWest;
@@ -110,6 +112,8 @@ public class ViewServerMode extends JFrame {
 	private JButton btnStart;
 	private JButton btnStop;
 	private JButton btnReadPort;
+	
+	private JToggleButton btnToggleStream;
 
 	private JTable tblBytesRead;
 	private DefaultTableModel tblModelBytesRead;
@@ -147,7 +151,7 @@ public class ViewServerMode extends JFrame {
 		setTitle(String.format("%s - %s", SCUIFeature.get("APP_NAME"), SCUILocale.get("ViewServerMode.title")));
 		setLocationRelativeTo(this);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		buttons = new ArrayList<JButton>();
+		buttons = new ArrayList<AbstractButton>();
 		menuItems = new ArrayList<JMenuItem>();
 
 		// MENU
@@ -200,12 +204,14 @@ public class ViewServerMode extends JFrame {
 
 		btnStart = new JButton(SCUILocale.get("ViewServerMode.btnStart"));
 		btnStop = new JButton(SCUILocale.get("ViewServerMode.btnStop"));
-
+		
+		btnToggleStream = new JToggleButton("Start/Stop Streaming");
+		
 		pnlServer.add(lblPort, "width 50%");
 		pnlServer.add(txtPort, "width 50%, wrap 10");
 		pnlServer.add(btnStart, "grow, height 30");
 		pnlServer.add(btnStop, "grow, height 30");
-
+		
 		// CENTRAL PANEL
 		pnlCentral = new JPanel();
 		pnlCentral.setLayout(new MigLayout());
@@ -249,6 +255,8 @@ public class ViewServerMode extends JFrame {
 
 		btnReadPort = new JButton(SCUILocale.get("ViewServerMode.btnReadPort"));
 
+		btnToggleStream = new JToggleButton("Start/Stop Streaming");
+		
 		lblStatusValue = new JLabel();
 		lblStatusValue.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY), SCUILocale.get("ViewServerMode.lblStatusValue")));
 		lblStatusValue.setFont(new Font(lblStatusValue.getFont().getName(), Font.BOLD, 16));
@@ -320,7 +328,9 @@ public class ViewServerMode extends JFrame {
 		pnlScale.add(btnReadPort, "grow, height 70, span 1 2");
 		pnlScale.add(lblPortValue, "span 3, grow,  height 70, wrap");
 		pnlScale.add(lblStatusValue, "span 3, grow,  height 40, wrap");
-
+		
+		pnlScale.add(btnToggleStream, "grow, span 2, wrap");
+		
 		pnlScale.add(lblFullString, "grow");
 		pnlScale.add(txtFullString, "span 2, grow, wrap");
 
@@ -344,10 +354,11 @@ public class ViewServerMode extends JFrame {
 		buttons.add(btnReadPort);
 		buttons.add(btnStart);
 		buttons.add(btnStop);
+		buttons.add(btnToggleStream);
 	}
 
 	public void addListener(ControllerViewServerMode listener) {
-		for (JButton button : buttons) {
+		for (AbstractButton button : buttons) {
 			button.addActionListener(listener);
 		}
 
@@ -468,6 +479,10 @@ public class ViewServerMode extends JFrame {
 
 	public JLabel getLblStatusValue() {
 		return lblStatusValue;
+	}
+	
+	public JToggleButton getBtnToggleStream() {
+		return btnToggleStream;
 	}
 
 	public JMenuItem getMenuItemDocumentation() {
