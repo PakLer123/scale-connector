@@ -67,8 +67,8 @@ public class ScaleConnector {
 	private int stopBits;
 	private int parity;
 	private int byteCount;
-	private int endCharacter;
-	private int startCharacter;
+	private char endCharacter;
+	private char startCharacter;
 	private String serialPort;
 	private int readings;
 	private int floatingPoint;
@@ -146,7 +146,7 @@ public class ScaleConnector {
 	/**
 	 * @return End Character, default 3
 	 */
-	public int getEndCharacter() {
+	public char getEndCharacter() {
 		return endCharacter;
 	}
 
@@ -155,14 +155,14 @@ public class ScaleConnector {
 	 * 
 	 * @param endCharacter
 	 */
-	public void setEndCharacter(int endCharacter) {
+	public void setEndCharacter(char endCharacter) {
 		this.endCharacter = endCharacter;
 	}
 
 	/**
 	 * @return Start Character, default 2
 	 */
-	public int getStartCharacter() {
+	public char getStartCharacter() {
 		return startCharacter;
 	}
 
@@ -171,7 +171,7 @@ public class ScaleConnector {
 	 * 
 	 * @param startCharacter
 	 */
-	public void setStartCharacter(int startCharacter) {
+	public void setStartCharacter(char startCharacter) {
 		this.startCharacter = startCharacter;
 	}
 
@@ -307,11 +307,11 @@ public class ScaleConnector {
 	 * @param parity
 	 *            Parity
 	 */
-	public ScaleConnector(String serialPort, int baud, int dataBits, int stopBits, int parity) {
+	public ScaleConnector(String serialPort, int baud, int dataBits, int stopBits, int parity, char startCharacter, char endCharacter) {
 		timeout = 5000;
 		byteCount = 9;
-		startCharacter = '0';
-		endCharacter = '1';
+		this.startCharacter = startCharacter;
+		this.endCharacter = endCharacter;
 		readings = 1;
 		isStableValue = false;
 		floatingPoint = 0;
@@ -430,7 +430,7 @@ public class ScaleConnector {
 //	    return keyMax;
 //	}
 
-	private String getValue(String string) {
+	private String getValue(String string, char startCharacter, char endCharacter) {
 	    log.info("Input string for processing: " + string);
 
 	    try {
@@ -526,7 +526,7 @@ public class ScaleConnector {
 	                continue;
 	            }
 
-	            String processedValue = getValue(rawValue);
+	            String processedValue = getValue(rawValue, getStartCharacter(), getEndCharacter());
 	            log.info("Processed value: " + processedValue);
 
 	            if (processedValue == null || processedValue.isEmpty()) {

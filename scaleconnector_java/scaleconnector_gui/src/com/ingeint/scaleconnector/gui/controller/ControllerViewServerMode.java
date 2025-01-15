@@ -206,6 +206,7 @@ public class ControllerViewServerMode implements ActionListener, WindowListener 
 
 	                // Gather configuration settings
 	                int baud = viewServerMode.getTxtBaud().getInteger();
+	                System.out.println("baud: " + baud);
 	                int dataBits = viewServerMode.getTxtDataBits().getInteger();
 	                int stopBits = viewServerMode.getTxtStopBits().getInteger();
 	                int parity = viewServerMode.getTxtParity().getInteger();
@@ -228,9 +229,12 @@ public class ControllerViewServerMode implements ActionListener, WindowListener 
 	                int endCut = viewServerMode.getTxtEndCutPosition().getInteger();
 
 	                // Handle start and end characters
-	                String startCharText = viewServerMode.getTxtStartCharacter().getText().trim();
-	                String endCharText = viewServerMode.getTxtEndCharacter().getText().trim();
-                	
+	                String startCharString = viewServerMode.getTxtStartCharacter().getText().toString();
+	                System.out.println("startCharString:" + startCharString);
+	                char startCharText = viewServerMode.getTxtStartCharacter().getText().charAt(0);
+	                System.out.println("startchartext = "+ startCharText);
+	                char endCharText = viewServerMode.getTxtEndCharacter().getText().charAt(0);
+                	System.out.println("endchartext = " + endCharText);
 	                // Set values to save
 					SCUIFeature.set("DEFAULT_PARITY", viewServerMode.getTxtParity().getText().trim());
 					SCUIFeature.set("DEFAULT_STOPBITS", viewServerMode.getTxtStopBits().getText().trim());
@@ -255,7 +259,7 @@ public class ControllerViewServerMode implements ActionListener, WindowListener 
                 	}
 	                
 	                // Initialize ScaleConnector
-	                sc = new ScaleConnector(port, baud, dataBits, stopBits, parity);
+	                sc = new ScaleConnector(port, baud, dataBits, stopBits, parity, startCharText, endCharText);
 	                sc.setByteCount(byteCount);
 	                sc.setReadings(readings);
 
@@ -263,20 +267,22 @@ public class ControllerViewServerMode implements ActionListener, WindowListener 
 	                byte[] bytesPortValue = sc.readBytes();
 	                String portValue = sc.readValue();
 
-	                if (startCharText.isEmpty()) {
-	                    startCharText = portValue.substring(0, 1); // First character
-	                    logger.info("Start character defaulted to: " + startCharText);
-	                }
-	                if (endCharText.isEmpty()) {
-	                    endCharText = portValue.substring(portValue.length() - 1); // Last character
-	                    logger.info("End character defaulted to: " + endCharText);
-	                }
+//	                if (startCharText.isEmpty()) {
+//	                    startCharText = portValue.substring(0, 1); // First character
+//	                    logger.info("Start character defaulted to: " + startCharText);
+//	                }
+//	                if (endCharText.isEmpty()) {
+//	                    endCharText = portValue.substring(portValue.length() - 1); // Last character
+//	                    logger.info("End character defaulted to: " + endCharText);
+//	                }
 
-	                int startChar = startCharText.charAt(0);
-	                int endChar = endCharText.charAt(0);
+	                char startChar = startCharText;
+	                char endChar = endCharText;
 
 	                sc.setStartCharacter(startChar);
+	                System.out.println("Start character: " + sc.getStartCharacter());
 	                sc.setEndCharacter(endChar);
+	                System.out.println("End character: " + sc.getEndCharacter());
 	                sc.setStartCutPosition(startCut);
 	                sc.setEndCutPosition(endCut);
 	                sc.setStabilityValuePosition(sIndicatorPos);

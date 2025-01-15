@@ -277,15 +277,15 @@ public class Main {
 		int byteCount = Integer.parseInt(SCUIFeature.get("DEFAULT_BYTECOUNT").trim());
 		int readings = Integer.parseInt(SCUIFeature.get("DEFAULT_READINGS").trim());
 		String serialPort = SCUIFeature.get("DEFAULT_SERIALPORT");
-		int startCharacter = Integer.parseInt(SCUIFeature.get("DEFAULT_STARTCHARACTER").trim());
-		int endCharacter = Integer.parseInt(SCUIFeature.get("DEFAULT_ENDCHARACTER").trim());
+		char startCharacter = SCUIFeature.get("DEFAULT_STARTCHARACTER").trim().charAt(0);
+		char endCharacter = SCUIFeature.get("DEFAULT_ENDCHARACTER").trim().charAt(0);
 		int startCut = Integer.parseInt(SCUIFeature.get("DEFAULT_STARTCUT"));
 		int endCut = Integer.parseInt(SCUIFeature.get("DEFAULT_ENDCUT"));
 		int sIndicatorPos = Integer.parseInt(SCUIFeature.get("DEFAULT_SINDICATORPOS"));
 		int sIndicator = Integer.parseInt(SCUIFeature.get("DEFAULT_SINDICATOR"));
 		int fPoint = Integer.parseInt(SCUIFeature.get("DEFAULT_FPOINT"));
 
-		ScaleConnector sc = new ScaleConnector(serialPort, baud, dataBits, stopBits, parity);
+		ScaleConnector sc = new ScaleConnector(serialPort, baud, dataBits, stopBits, parity, startCharacter, endCharacter);
 		sc.setByteCount(byteCount);
 		sc.setStartCharacter(startCharacter);
 		sc.setEndCharacter(endCharacter);

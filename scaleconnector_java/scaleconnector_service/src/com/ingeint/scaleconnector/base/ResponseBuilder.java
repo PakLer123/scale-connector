@@ -88,22 +88,22 @@ public class ResponseBuilder {
 		        int stabilityValuePosition = Integer.parseInt(parameters.get("stabilitypos").trim());
 		        int floatingPoint = Integer.parseInt(parameters.get("floatingpoint").trim());
 
-		        String startCharText = parameters.get("startcharacter");
-		        String endCharText = parameters.get("endcharacter");
+		        char startCharText = parameters.get("startcharacter").charAt(0);
+		        char endCharText = parameters.get("endcharacter").charAt(0);
 
 		        // Open ScaleConnector
-		        ScaleConnector scaleConnector = new ScaleConnector(serialPort, baud, dataBits, stopBits, parity);
+		        ScaleConnector scaleConnector = new ScaleConnector(serialPort, baud, dataBits, stopBits, parity, startCharText, endCharText);
 		        scaleConnector.setByteCount(byteCount);
 		        scaleConnector.setReadings(readings);
 
 		        // Determine dynamic start and end characters if empty
-		        if (startCharText.isEmpty() || endCharText.isEmpty()) {
-		            String rawValue = scaleConnector.readValue();
-		            if (startCharText.isEmpty()) startCharText = rawValue.substring(0, 1);
-		            if (endCharText.isEmpty()) endCharText = rawValue.substring(rawValue.length() - 1);
-		        }
-		        scaleConnector.setStartCharacter(startCharText.charAt(0));
-		        scaleConnector.setEndCharacter(endCharText.charAt(0));
+//		        if (startCharText.isEmpty() || endCharText.isEmpty()) {
+//		            String rawValue = scaleConnector.readValue();
+//		            if (startCharText.isEmpty()) startCharText = rawValue.substring(0, 1);
+//		            if (endCharText.isEmpty()) endCharText = rawValue.substring(rawValue.length() - 1);
+//		        }
+		        scaleConnector.setStartCharacter(startCharText);
+		        scaleConnector.setEndCharacter(endCharText);
 		        scaleConnector.setStartCutPosition(startCut);
 		        scaleConnector.setEndCutPosition(endCut);
 		        scaleConnector.setStabilityValuePosition(stabilityValuePosition);
