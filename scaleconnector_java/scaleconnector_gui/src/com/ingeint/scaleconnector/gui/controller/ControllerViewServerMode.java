@@ -196,8 +196,6 @@ public class ControllerViewServerMode implements ActionListener, WindowListener 
 
 
 	public synchronized void readPort() {
-	    viewWait = new ViewWait();
-
 	    new Thread(new Runnable() {
 	        @Override
 	        public void run() {
@@ -308,12 +306,10 @@ public class ControllerViewServerMode implements ActionListener, WindowListener 
 	            } catch (Exception e) {
 	                logger.severe("Error in readPort(): " + e.getMessage());
 	                e.printStackTrace();
-	            } finally {
-	                viewWait.close(); // Ensure the wait dialog is closed
-	            }
+	            } 
 	        }
 	    }).start();
-	    viewWait.display();
+	    
 	}
 	
 	public synchronized void startLiveStream() {
