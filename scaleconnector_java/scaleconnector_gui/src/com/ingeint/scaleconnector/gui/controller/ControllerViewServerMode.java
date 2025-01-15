@@ -38,6 +38,7 @@ import java.util.logging.Level;
 import java.util.logging.*;
 
 import javax.swing.JOptionPane;
+import javax.swing.JToggleButton;
 
 import com.ingeint.scaleconnector.base.ScaleConnector;
 import com.ingeint.scaleconnector.base.Server;
@@ -55,10 +56,9 @@ public class ControllerViewServerMode implements ActionListener, WindowListener 
 	private ViewServerMode viewServerMode;
 	private Server server;
 	private ViewWait viewWait;
+	private volatile boolean isStreaming = false;
 
 	private static Logger logger = Logger.getLogger(ControllerViewServerMode.class.getName());
-//	Logger rootLogger = LogManager.getLogManager().getLogger("");
-	//Arrays.stream(rootLogger.getHandlers()).forEach(handler -> handler.setLevel(Level.WARNING));
 
 	public ControllerViewServerMode() {
 		LogManager.getLogManager().getLogger("").setLevel(Level.INFO);
@@ -79,53 +79,6 @@ public class ControllerViewServerMode implements ActionListener, WindowListener 
 	    }
 	}
 
-//	public void initView() {
-////		for (String portName : SerialPortList.getPortNames()) {
-////			viewServerMode.getCmbModelSerialPort().addElement(portName);
-////		}
-//		logger.info("Starting initView()");
-//		try {
-//			logger.info("Detecting serial ports using jSerialComm...");
-//			logger.info("Calling SerialPort.getCommPorts()...");
-//		    SerialPort[] ports= SerialPort.getCommPorts();
-//		    if (ports.length == 0) {
-//		        logger.warning("No serial ports detected.");
-//		    }
-//		    logger.info("SerialPort.getCommPorts() returned: " + ports.length + " ports");
-//		    logger.info("Number of ports detected: " + ports.length);
-//		    for (SerialPort port : ports) {
-//		        logger.info("Adding serial port: " + port.getSystemPortName());
-//		        viewServerMode.getCmbModelSerialPort().addElement(port.getSystemPortName());
-//		    }
-//			
-//			logger.info("Serial ports loaded successfully");
-//	
-//			if (viewServerMode.getCmbModelSerialPort().getIndexOf(SCUIFeature.get("DEFAULT_SERIALPORT")) > 0) {
-//	            viewServerMode.getCmbModelSerialPort().setSelectedItem(SCUIFeature.get("DEFAULT_SERIALPORT"));
-//	        }
-//
-//		viewServerMode.getTxtBaud().setText(SCUIFeature.get("DEFAULT_BAUD"));
-//		viewServerMode.getTxtDataBits().setText(SCUIFeature.get("DEFAULT_DATABITS"));
-//		viewServerMode.getTxtParity().setText(SCUIFeature.get("DEFAULT_PARITY"));
-//		viewServerMode.getTxtStopBits().setText(SCUIFeature.get("DEFAULT_STOPBITS"));
-//		viewServerMode.getTxtPort().setText(SCUIFeature.get("DEFAULT_PORT"));
-//		viewServerMode.getTxtByteCount().setText(SCUIFeature.get("DEFAULT_BYTECOUNT"));
-//		viewServerMode.getTxtStartCharacter().setText(SCUIFeature.get("DEFAULT_STARTCHARACTER"));
-//		viewServerMode.getTxtEndCharacter().setText(SCUIFeature.get("DEFAULT_ENDCHARACTER"));
-//		viewServerMode.getTxtReadings().setText(SCUIFeature.get("DEFAULT_READINGS"));
-//		viewServerMode.getTxtStartCutPosition().setText(SCUIFeature.get("DEFAULT_STARTCUT"));
-//		viewServerMode.getTxtEndCutPosition().setText(SCUIFeature.get("DEFAULT_ENDCUT"));
-//		viewServerMode.getTxtStabilityIndicatorPosition().setText(SCUIFeature.get("DEFAULT_SINDICATORPOS"));
-//		viewServerMode.getTxtStabilityIndicator().setText(SCUIFeature.get("DEFAULT_SINDICATOR"));
-//		viewServerMode.getTxtFloatingPoint().setText(SCUIFeature.get("DEFAULT_FPOINT"));
-//		viewServerMode.getBtnStop().setEnabled(false);
-//
-//		viewServerMode.getTblModelBytesRead().setColumnIdentifiers(new Object[] { "POS", "CHAR", "INT", "HEX" });
-//		} catch (Exception e) {
-//	        logger.severe("Error in initView(): " + e.getMessage());
-//	        e.printStackTrace();
-//	    }
-//	}
 	public void initView() {
 	    logger.info("Starting initView()...");
 	    try {
@@ -215,7 +168,9 @@ public class ControllerViewServerMode implements ActionListener, WindowListener 
 			stopServer();
 		} else if (e.getSource().equals(viewServerMode.getBtnReadPort())) {
 			readPort();
-		}
+		} else if (e.getSource().equals(viewServerMode.getBtnToggleStream())) {
+            handleLiveStreamToggle();
+        }
 	}
 
 	public void goDocumentation() {
@@ -360,7 +315,46 @@ public class ControllerViewServerMode implements ActionListener, WindowListener 
 	    }).start();
 	    viewWait.display();
 	}
+	
+	public synchronized void startLiveStream() {
+		if(isStreaming) {
+			logger.info("Live stream already running.");
+			return;
+		}
+		isStreaming = true;
+		new Thread(()-> {
+			while(isStreaming) {
+				try {
+					readPort();
+					Thread.sleep(250);
+				}catch(InterruptedException e) {
+					logger.warning("Live stream interrupted: " + e.getMessage());
+					Thread.currentThread().interrupt();
+				} catch(Exception e) {
+					logger.severe("Error during live stream: " + e.getMessage());
+					isStreaming = false;
+				}
+			}
+		}).start();
+		logger.info("Live stream started.");
+	}
+	
+	public synchronized void stopLiveStream() {
+		isStreaming = false;
+		logger.info("Live steam stopped.");
+	}
+	
+	private void handleLiveStreamToggle() {
+	    JToggleButton toggleButton = viewServerMode.getBtnToggleStream();
 
+	    if (toggleButton.isSelected()) {
+	        toggleButton.setText("Stop Streaming");
+	        startLiveStream();
+	    } else {
+	        toggleButton.setText("Start Streaming");
+	        stopLiveStream();
+	    }
+	}
 
 
 	private synchronized void stopServer() {
