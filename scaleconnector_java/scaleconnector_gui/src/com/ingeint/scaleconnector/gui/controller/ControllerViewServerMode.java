@@ -46,7 +46,6 @@ import com.ingeint.scaleconnector.gui.feature.SCUIFeature;
 import com.ingeint.scaleconnector.gui.feature.SCUILocale;
 import com.ingeint.scaleconnector.gui.view.ViewAbout;
 import com.ingeint.scaleconnector.gui.view.ViewServerMode;
-import com.ingeint.scaleconnector.gui.view.ViewWait;
 
 
 import com.fazecast.jSerialComm.*;
@@ -55,7 +54,6 @@ public class ControllerViewServerMode implements ActionListener, WindowListener 
 
 	private ViewServerMode viewServerMode;
 	private Server server;
-	private ViewWait viewWait;
 	private volatile boolean isStreaming = false;
 
 	private static Logger logger = Logger.getLogger(ControllerViewServerMode.class.getName());
@@ -138,8 +136,6 @@ public class ControllerViewServerMode implements ActionListener, WindowListener 
 	        e.printStackTrace();
 	    }
 	}
-
-
 
 	public void close() {
 		if (server != null && server.isAlive()) {
@@ -266,15 +262,6 @@ public class ControllerViewServerMode implements ActionListener, WindowListener 
 	                // Default to first and last characters if input is empty
 	                byte[] bytesPortValue = sc.readBytes();
 	                String portValue = sc.readValue();
-
-//	                if (startCharText.isEmpty()) {
-//	                    startCharText = portValue.substring(0, 1); // First character
-//	                    logger.info("Start character defaulted to: " + startCharText);
-//	                }
-//	                if (endCharText.isEmpty()) {
-//	                    endCharText = portValue.substring(portValue.length() - 1); // Last character
-//	                    logger.info("End character defaulted to: " + endCharText);
-//	                }
 
 	                char startChar = startCharText;
 	                char endChar = endCharText;

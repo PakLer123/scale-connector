@@ -329,107 +329,6 @@ public class ScaleConnector {
         port.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, timeout, timeout);
         
     }
-
-	/**
-	 * Extracts the desired value using the start and end character
-	 * 
-	 * @param string
-	 *            String to format
-	 * @return Value
-	 */
-//	private String getValue(String string) {
-//		char sc = (char) startCharacter;
-//		char ec = (char) endCharacter;
-//		// String patternString = String.format("\\%c([^\\%c\\%c]+)\\%c", sc, sc, ec, ec);
-//		String patternString = String.format("\\%cWeight: ([0-9.]+)", sc);
-//		Pattern pattern = Pattern.compile(patternString);
-//		Matcher matcher = pattern.matcher(string);
-//		HashMap<String, Integer> list = new HashMap<String, Integer>();
-//
-//		String raw = "";
-//		String value = "";
-//		String stability = "";
-//
-//		while (matcher.find()) {
-//			raw = matcher.group(0);
-//			stability = raw.substring(stabilityValuePosition, stabilityValuePosition + 1);
-//			value = raw.substring(startCutPosition, endCutPosition + 1).replaceAll("[^0-9]", "");
-//
-//			if (floatingPoint > 0)
-//				value = String.valueOf(Integer.parseInt(value) / Math.pow(10, floatingPoint));
-//
-//			value = stability + value;
-//
-//			if (list.containsKey(value)) {
-//				list.put(value, list.get(value) + 1);
-//			} else {
-//				list.put(value, 1);
-//			}
-//		}
-//
-//		Iterator<String> iterator = list.keySet().iterator();
-//
-//		int max = 0;
-//		String keyMax = "";
-//
-//		while (iterator.hasNext()) {
-//			String stringTemp = (String) iterator.next();
-//			if (list.get(stringTemp) > max) {
-//				max = list.get(stringTemp);
-//				keyMax = stringTemp;
-//			}
-//		}
-//
-//		return keyMax;
-//	}
-	
-//	private String getValue(String string) {
-//	    log.info("Raw string input for getValue: " + string);
-//
-//	    // Regex to match +<digits>1B
-//	    String patternString = "\\+([0-9]+)1B";
-//	    log.info("Regex pattern used: " + patternString);
-//
-//	    Pattern pattern = Pattern.compile(patternString);
-//	    Matcher matcher = pattern.matcher(string);
-//
-//	    HashMap<String, Integer> list = new HashMap<>();
-//	    String value = "";
-//
-//	    while (matcher.find()) {
-//	        try {
-//	            log.info("Regex match found: " + matcher.group(0));
-//	            value = matcher.group(1); // Extract digits between "+" and "1B"
-//	            log.info("Extracted numeric value (including '1'): " + value);
-//
-//	            // Apply floating-point adjustment if needed
-//	            if (!value.isEmpty() && floatingPoint > 0) {
-//	                value = String.valueOf(Double.parseDouble(value) / Math.pow(10, floatingPoint));
-//	            }
-//
-//	            // Prepend stability if needed
-//	            value = "0" + value;
-//	            log.info("Processed value after floating-point adjustment: " + value);
-//
-//	            // Update frequency map
-//	            list.put(value, list.getOrDefault(value, 0) + 1);
-//	            log.info("Frequency map: " + list);
-//
-//	        } catch (Exception e) {
-//	            log.warning("Error processing value: " + e.getMessage());
-//	        }
-//	    }
-//
-//	    // Determine the most frequent value
-//	    String keyMax = list.entrySet().stream()
-//	            .max(Map.Entry.comparingByValue())
-//	            .map(Map.Entry::getKey)
-//	            .orElse("");
-//
-//	    log.info("Most frequent processed value: " + keyMax);
-//	    return keyMax;
-//	}
-
 	private String getValue(String string, char startCharacter, char endCharacter) {
 	    log.info("Input string for processing: " + string);
 
@@ -495,11 +394,6 @@ public class ScaleConnector {
 	        return "";
 	    }
 	}
-
-
-
-
-
 
 	/**
 	 * Read bytes from the serial port and return the value. This method uses
@@ -599,25 +493,19 @@ public class ScaleConnector {
 	        if (!sp.openPort()) {
 	            throw new Exception("Unable to open port: " + serialPort);
 	        }
-
-	       // log.info("Port opened successfully: " + serialPort);
-
 	        int bytesRead = sp.readBytes(buffer, buffer.length);
 	        if (bytesRead < 0) {
 	            throw new Exception("No data read from port.");
 	        }
-
 	        log.info("Bytes Read: " + bytesRead);
 	        log.info("Data: " + Arrays.toString(buffer));
 	        return buffer;
 	    } catch (Exception e) {
-	        //log.severe("Error during port read: " + e.getMessage());
 	        e.printStackTrace();
 	        throw e;
 	    } finally {
 	        if (sp.isOpen()) {
 	            sp.closePort();
-	            //log.info("Port closed: " + serialPort);
 	        }
 	    }
 	}

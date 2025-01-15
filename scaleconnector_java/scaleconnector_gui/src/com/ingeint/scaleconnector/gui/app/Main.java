@@ -33,7 +33,6 @@ import java.util.logging.Level;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 
 import jline.ConsoleReader;
 import com.fazecast.jSerialComm.*;
@@ -295,14 +294,12 @@ public class Main {
 		sc.setStabilityValuePosition(sIndicatorPos);
 		sc.setStabilityValue(sIndicator);
 		sc.setFloatingPoint(fPoint);
-
 		try {
 			System.out.println("Value: " + sc.readValue());
 		} catch (Exception e) {
 			logger.severe("Error reading serial port");
 			e.printStackTrace();
 		}
-
 		System.out.println();
 	}
 
@@ -353,16 +350,12 @@ public class Main {
 		JFrame.setDefaultLookAndFeelDecorated(false);
 		JDialog.setDefaultLookAndFeelDecorated(false);
 		try {
-//			SubstanceLookAndFeel.setSkin("org.jvnet.substance.skin.CremeSkin");
-//			System.out.println("Substance Look-and-Feel applied successfully.");
 			SubstanceLookAndFeel.setSkin("org.jvnet.substance.skin.CremeSkin");
 	        System.out.println("Substance Look-and-Feel applied.");
 		} catch(Exception e) {
 			System.err.println("Error applying substance Look-and-feel: " + e.getMessage());
 			e.printStackTrace();
 		}
-		
-//		UIManager.put(SubstanceLookAndFeel.NO_EXTRA_ELEMENTS, Boolean.TRUE);
 		new ControllerViewSelectMode();
 	}
 

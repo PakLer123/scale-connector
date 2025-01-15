@@ -174,11 +174,7 @@ public class ControllerViewClientMode implements ActionListener, WindowListener 
 
         parameters.put("startcharacter", startCharacter);
         parameters.put("endcharacter", endCharacter);
-//        // Validate single character
-//        if (startCharacter.length() != 1 || endCharacter.length() != 1) {
-//            JOptionPane.showMessageDialog(viewClientMode, "Start and End Characters must each be a single character.", "Error", JOptionPane.ERROR_MESSAGE);
-//            throw new IllegalArgumentException("Invalid Start or End Character");
-//        }
+
         logger.info("Start Character: " + parameters.get("startcharacter"));
         logger.info("End Character: " + parameters.get("endcharacter"));
 

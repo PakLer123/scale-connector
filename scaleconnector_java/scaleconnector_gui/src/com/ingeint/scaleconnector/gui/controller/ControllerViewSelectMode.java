@@ -76,17 +76,6 @@ public class ControllerViewSelectMode implements ActionListener, WindowListener,
 			logger.severe("viewSelectMode is null. Cannot process actions.");
 			return;
 		}
-//		if (e.getSource().equals(viewSelectMode.getBtnServer())) {
-//	        logger.info("Testing ControllerViewServerMode initialization...");
-//	        try {
-//	            ControllerViewServerMode serverMode = new ControllerViewServerMode();
-//	            logger.info("ControllerViewServerMode initialized successfully");
-//	        } catch (Exception ex) {
-//	            logger.severe("Error initializing ControllerViewServerMode: " + ex.getMessage());
-//	            ex.printStackTrace();
-//	            JOptionPane.showMessageDialog(null, "Failed to initialize server mode: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-//	        }
-//	    }
 		try {
 			if (e.getSource().equals(viewSelectMode.getBtnClient())) {
 				logger.info("Client Mode activated. ");

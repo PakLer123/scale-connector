@@ -95,13 +95,6 @@ public class ResponseBuilder {
 		        ScaleConnector scaleConnector = new ScaleConnector(serialPort, baud, dataBits, stopBits, parity, startCharText, endCharText);
 		        scaleConnector.setByteCount(byteCount);
 		        scaleConnector.setReadings(readings);
-
-		        // Determine dynamic start and end characters if empty
-//		        if (startCharText.isEmpty() || endCharText.isEmpty()) {
-//		            String rawValue = scaleConnector.readValue();
-//		            if (startCharText.isEmpty()) startCharText = rawValue.substring(0, 1);
-//		            if (endCharText.isEmpty()) endCharText = rawValue.substring(rawValue.length() - 1);
-//		        }
 		        scaleConnector.setStartCharacter(startCharText);
 		        scaleConnector.setEndCharacter(endCharText);
 		        scaleConnector.setStartCutPosition(startCut);
