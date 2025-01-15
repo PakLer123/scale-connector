@@ -259,10 +259,6 @@ public class ControllerViewServerMode implements ActionListener, WindowListener 
 	                sc.setByteCount(byteCount);
 	                sc.setReadings(readings);
 
-	                // Default to first and last characters if input is empty
-	                byte[] bytesPortValue = sc.readBytes();
-	                String portValue = sc.readValue();
-
 	                char startChar = startCharText;
 	                char endChar = endCharText;
 
@@ -275,7 +271,10 @@ public class ControllerViewServerMode implements ActionListener, WindowListener 
 	                sc.setStabilityValuePosition(sIndicatorPos);
 	                sc.setStabilityValue(sIndicator);
 	                sc.setFloatingPoint(fPoint);
-
+	                
+	                // Default to first and last characters if input is empty
+	                byte[] bytesPortValue = sc.readBytes();
+	                String portValue = sc.readValue();
 	                // Update UI with data
 	                if (sc.isStableValue()) {
 	                    viewServerMode.getLblStatusValue().setText(SCUILocale.get("ViewServerMode.STATUS_STABLE"));
