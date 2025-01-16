@@ -475,10 +475,9 @@ public class ScaleConnector {
 	 *             If timeout expires before connecting
 	 */
 	public synchronized byte[] readBytes() throws Exception {
-		
 	    SerialPort sp = this.port;
-	    if(!sp.isOpen() && !sp.openPort()) {
-	    	throw new Exception("Unable to open port: " + serialPort);
+	    if (!sp.isOpen() && !sp.openPort()) {
+	        throw new Exception("Unable to open port: " + serialPort);
 	    }
 	    byte[] buffer = new byte[byteCount];
 	    try {
@@ -487,13 +486,14 @@ public class ScaleConnector {
 	        sp.setNumStopBits(stopBits);
 	        sp.setParity(parity);
 	        sp.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, timeout, timeout);
-
+	
 	        if (!sp.openPort()) {
 	            throw new Exception("Unable to open port: " + serialPort);
 	        }
 	        int bytesRead = sp.readBytes(buffer, buffer.length);
-	        if (bytesRead < 0) {
-	            throw new Exception("No data read from port.");
+	        if (bytesRead <= 0) {
+	            log.warning("No data read from port.");
+	            return new byte[0]; // Return an empty byte array if no data is read
 	        }
 	        log.info("Bytes Read: " + bytesRead);
 	        log.info("Data: " + Arrays.toString(buffer));
@@ -507,4 +507,5 @@ public class ScaleConnector {
 	        }
 	    }
 	}
+
 }
