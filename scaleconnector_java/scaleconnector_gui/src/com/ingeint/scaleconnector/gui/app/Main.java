@@ -38,8 +38,6 @@ import javax.swing.UIManager;
 import jline.ConsoleReader;
 import com.fazecast.jSerialComm.*;
 
-import com.formdev.flatlaf.FlatLightLaf;
-
 import com.ingeint.scaleconnector.base.ScaleConnector;
 import com.ingeint.scaleconnector.gui.console.ConsoleServerMode;
 import com.ingeint.scaleconnector.gui.controller.ControllerViewSelectMode;

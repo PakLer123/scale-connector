@@ -30,12 +30,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+
 import java.net.URI;
-import java.util.Arrays;
+
 import java.util.logging.Logger;
 import java.util.logging.LogManager;
 import java.util.logging.Level;
-import java.util.logging.*;
 
 import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;

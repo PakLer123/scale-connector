@@ -24,8 +24,6 @@
 
 package com.ingeint.scaleconnector.gui.feature;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
@@ -37,9 +35,6 @@ public class SCUILocale {
 	private static final String LOCALE_FILE = "locale/en_US.properties";
 	private static Properties properties = new Properties();
 
-//	public static void load(String language) throws FileNotFoundException, IOException {
-//		properties.load(new FileInputStream(String.format("%s%s.properties", SCUIFeature.get("PATH_LOCALE"), language)));
-//	}
 	public static void load() throws IOException{
 		System.out.println("Attempting to load en_US.properties from: " + SCUILocale.class.getClassLoader().getResource("locale/en_US.properties"));
 		InputStream input = SCUILocale.class.getClassLoader().getResourceAsStream(LOCALE_FILE);

@@ -26,16 +26,9 @@ package com.ingeint.scaleconnector.base;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.logging.Logger;
 
-//import jssc.SerialPort;
-//import jssc.SerialPortException;
-//import jssc.SerialPortTimeoutException;
 import com.fazecast.jSerialComm.SerialPort;
 
 /**
