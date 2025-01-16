@@ -36,6 +36,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import jline.ConsoleReader;
+
 import com.fazecast.jSerialComm.*;
 
 import com.ingeint.scaleconnector.base.ScaleConnector;

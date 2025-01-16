@@ -435,8 +435,13 @@ public class ScaleConnector {
 	                mostFrequentValue = entry.getKey();
 	            }
 	        }
-
-	        isStableValue = !mostFrequentValue.isEmpty() && mostFrequentValue.charAt(0) == stabilityValue;
+	        System.out.println(!mostFrequentValue.isEmpty());
+	        System.out.println(mostFrequentValue.toString());
+	        System.out.println(maxFrequency);
+	        System.out.println(stabilityValue);
+	        System.out.println(maxFrequency == stabilityValue);
+	        //isStableValue = !mostFrequentValue.isEmpty() && mostFrequentValue.charAt(0) == stabilityValue;
+	        isStableValue = !mostFrequentValue.isEmpty() && maxFrequency == stabilityValue;
 	        return mostFrequentValue.isEmpty() ? "" : mostFrequentValue.substring(1);
 
 	    } catch (Exception e) {
