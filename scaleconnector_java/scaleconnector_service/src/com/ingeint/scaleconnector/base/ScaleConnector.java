@@ -440,7 +440,6 @@ public class ScaleConnector {
 	        System.out.println(maxFrequency);
 	        System.out.println(stabilityValue);
 	        System.out.println(maxFrequency == stabilityValue);
-	        //isStableValue = !mostFrequentValue.isEmpty() && mostFrequentValue.charAt(0) == stabilityValue;
 	        isStableValue = !mostFrequentValue.isEmpty() && maxFrequency == stabilityValue;
 	        return mostFrequentValue.isEmpty() ? "" : mostFrequentValue.substring(1);
 
@@ -462,6 +461,10 @@ public class ScaleConnector {
 	 */
 	public synchronized String readString() throws Exception {
 		byte[] buffer = readBytes();
+		if(buffer.length == 0) {
+			System.out.println("No buffer");
+			return "";
+		}
 		return new String(buffer);
 	}
 
