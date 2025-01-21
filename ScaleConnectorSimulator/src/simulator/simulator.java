@@ -24,29 +24,6 @@ public class simulator {
             logger.info("Port opened successfully.");
 
             // Simulate scale data in a separate thread
-//            Thread simulationThread = new Thread(() -> {
-//                try {
-//                    int counter = 0;
-//                    while (true) {
-//                        // Simulate data in the specified format
-//                        String formattedNumber = String.format("%08d1", counter);
-//                        String simulatedData = formattedNumber + "B"+ "\r";
-//
-//                        // Send the simulated data to the serial port
-//                        serialPort.getOutputStream().write(simulatedData.getBytes());
-//                        serialPort.getOutputStream().flush();
-//                        logger.info("Simulated Data Sent: " + simulatedData.trim());
-//
-//                        // Increment counter and reset after reaching 99999999
-//                        counter = (counter + 1) % 100000000;
-//
-//                        // Wait 1 second before sending the next data
-//                        Thread.sleep(100);
-//                    }
-//                } catch (Exception e) {
-//                    logger.log(Level.SEVERE, "Error in simulation thread", e);
-//                }
-//            });
             Thread simulationThread = new Thread(() -> {
                 try {
                     int weight = 0;
@@ -72,7 +49,7 @@ public class simulator {
                         iterations++;
 
                         // Wait 1 second before sending the next data
-                        Thread.sleep(100);
+                        Thread.sleep(1000);
                     }
                 } catch (Exception e) {
                     logger.log(Level.SEVERE, "Error in simulation thread", e);
