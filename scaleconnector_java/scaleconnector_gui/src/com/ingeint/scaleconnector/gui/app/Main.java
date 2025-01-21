@@ -344,25 +344,62 @@ public class Main {
 		new ConsoleServerMode();
 	}
 
+//	private static void initUI() {
+//		loadFeaturesUI();
+//		System.out.println("Initializing UI components...");
+//		JFrame mainFrame = new JFrame("Scale Connector");
+//		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		mainFrame.setSize(800, 800);
+//		mainFrame.setLocationRelativeTo(null);
+//		JFrame.setDefaultLookAndFeelDecorated(true);
+//		JDialog.setDefaultLookAndFeelDecorated(true);
+//		try {
+//			UIManager.setLookAndFeel(new CustomFlatLaf());
+//			//UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatDarkLaf());
+//	        System.out.println("FlatLaf look and feel applied");
+//		} catch(Exception e) {
+//			System.err.println("Error applying Flatlaf Look-and-feel: " + e.getMessage());
+//			e.printStackTrace();
+//		}
+//		new ControllerViewSelectMode();
+//	}
+	
+
 	private static void initUI() {
-		loadFeaturesUI();
-		System.out.println("Initializing UI components...");
-		JFrame mainFrame = new JFrame("Scale Connector");
-		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mainFrame.setSize(800, 600);
-		mainFrame.setLocationRelativeTo(null);
-		JFrame.setDefaultLookAndFeelDecorated(true);
-		JDialog.setDefaultLookAndFeelDecorated(true);
-		try {
-			UIManager.setLookAndFeel(new CustomFlatLaf());
-			//UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatDarkLaf());
+	    loadFeaturesUI();
+	    System.out.println("Initializing UI components...");
+	    JFrame mainFrame = new JFrame("Scale Connector");
+	    mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    mainFrame.setSize(800, 600);
+	
+	    // Get the screen dimensions
+	    java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+	    int screenWidth = screenSize.width;
+	    int screenHeight = screenSize.height;
+	
+	    // Get the window dimensions
+	    int windowWidth = mainFrame.getWidth();
+	    int windowHeight = mainFrame.getHeight();
+	
+	    // Calculate the new position
+	    int x = (screenWidth - windowWidth) / 2;
+	    int y = (screenHeight - windowHeight) / 2;
+	
+	    // Set the new position
+	    mainFrame.setLocation(x, y);
+	
+	    JFrame.setDefaultLookAndFeelDecorated(true);
+	    JDialog.setDefaultLookAndFeelDecorated(true);
+	    try {
+	        UIManager.setLookAndFeel(new CustomFlatLaf());
 	        System.out.println("FlatLaf look and feel applied");
-		} catch(Exception e) {
-			System.err.println("Error applying Flatlaf Look-and-feel: " + e.getMessage());
-			e.printStackTrace();
-		}
-		new ControllerViewSelectMode();
+	    } catch(Exception e) {
+	        System.err.println("Error applying Flatlaf Look-and-feel: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	    new ControllerViewSelectMode();
 	}
+
 	
 
 	private static void loadFeaturesUI() {

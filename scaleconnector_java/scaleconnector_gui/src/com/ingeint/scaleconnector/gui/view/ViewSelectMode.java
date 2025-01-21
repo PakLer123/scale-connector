@@ -52,7 +52,7 @@ public class ViewSelectMode extends JFrame {
         // Calculate dynamic dimensions
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = (int) (screenSize.width * 0.4);
-        int height = (int) (screenSize.height * 0.5);
+        int height = (int) (screenSize.height * 0.7);
 
         setLayout(new BorderLayout());
         setIconImage(SCUIStandard.ICON);
@@ -71,6 +71,7 @@ public class ViewSelectMode extends JFrame {
 
         // Set size and make visible
         setSize(width, height);
+        setLocationRelativeTo(null);
         System.out.println("ViewSelectMode initialized. Width = " + width + ", Height = " + height);
     }
 

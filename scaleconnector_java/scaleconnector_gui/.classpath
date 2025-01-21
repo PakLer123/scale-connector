@@ -15,5 +15,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/scaleconnector_client"/>
 	<classpathentry kind="lib" path="lib/flatlaf-3.5.4.jar"/>
 	<classpathentry kind="lib" path="lib/jSerialComm-2.11.0.jar"/>
+	<classpathentry kind="lib" path="/scaleconnector_service/src/com/ingeint/scaleconnector/base"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
