@@ -23,7 +23,7 @@ Features
 - IDE: Eclipse
 - Branch: dev
 - Linux and Windows operating systems
-- Java 7
+- Java 11
 - Designed to read RS-232 serial port
 - CPU Architecture x86, x86_64
 - Apache Tomcat 7
