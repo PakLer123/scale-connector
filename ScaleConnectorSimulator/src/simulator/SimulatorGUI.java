@@ -6,6 +6,10 @@ import com.fazecast.jSerialComm.SerialPortTimeoutException;
 import java.awt.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import com.formdev.flatlaf.FlatDarculaLaf;
+
 
 public class SimulatorGUI {
     private static final Logger logger = Logger.getLogger(SimulatorGUI.class.getName());
@@ -16,6 +20,12 @@ public class SimulatorGUI {
     private Thread simulationThread;
 
     public SimulatorGUI() {
+    	try {
+ //           UIManager.setLookAndFeel(new CustomFlatLaf());
+            UIManager.setLookAndFeel(new FlatDarculaLaf());
+        } catch (UnsupportedLookAndFeelException e) {
+            logger.log(Level.SEVERE, "Failed to set custom look and feel", e);
+        }
         JFrame frame = new JFrame("Simulator GUI");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);  // Increased window size
