@@ -1,11 +1,8 @@
-
 package simulator;
 
 import javax.swing.*;
-
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortTimeoutException;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,108 +14,128 @@ public class SimulatorGUI {
     private SerialPort serialPort;
     private JTextArea receivedDataArea;
     private JTextArea sentDataArea;
+    private JTextArea rawDataArea;  // New text area for raw data
     private Thread simulationThread;
 
     public SimulatorGUI() {
         JFrame frame = new JFrame("Simulator GUI");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 400);
+        frame.setSize(800, 600);  // Increased window size
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
+        JPanel mainPanel = new JPanel(new BorderLayout());
 
-        receivedDataArea = new JTextArea();
-        receivedDataArea.setEditable(false);
-        JScrollPane receivedScrollPane = new JScrollPane(receivedDataArea);
-        panel.add(receivedScrollPane, BorderLayout.CENTER);
-
-        sentDataArea = new JTextArea();
+        // Create a split pane for sent and received data
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        
+        // Top panel for sent data
+        JPanel topPanel = new JPanel(new BorderLayout());
+        sentDataArea = new JTextArea(5, 40);  // Formatted sent data
         sentDataArea.setEditable(false);
-        JScrollPane sentScrollPane = new JScrollPane(sentDataArea);
-        panel.add(sentScrollPane, BorderLayout.NORTH);
+        rawDataArea = new JTextArea(5, 40);   // Raw sent data
+        rawDataArea.setEditable(false);
+        
+        // Labels for the text areas
+        JPanel sentPanel = new JPanel(new BorderLayout());
+        sentPanel.add(new JLabel("Formatted Sent Data:"), BorderLayout.NORTH);
+        sentPanel.add(new JScrollPane(sentDataArea), BorderLayout.CENTER);
+        
+        JPanel rawPanel = new JPanel(new BorderLayout());
+        rawPanel.add(new JLabel("Raw Sent Data:"), BorderLayout.NORTH);
+        rawPanel.add(new JScrollPane(rawDataArea), BorderLayout.CENTER);
+        
+        // Add both to top panel
+        JSplitPane topSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, sentPanel, rawPanel);
+        topPanel.add(topSplitPane, BorderLayout.CENTER);
+        
+        // Bottom panel for received data
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        receivedDataArea = new JTextArea(10, 40);
+        receivedDataArea.setEditable(false);
+        bottomPanel.add(new JLabel("Received Data:"), BorderLayout.NORTH);
+        bottomPanel.add(new JScrollPane(receivedDataArea), BorderLayout.CENTER);
 
+        splitPane.setTopComponent(topPanel);
+        splitPane.setBottomComponent(bottomPanel);
+        splitPane.setDividerLocation(300);
+
+        mainPanel.add(splitPane, BorderLayout.CENTER);
+
+        // Button panel
+        JPanel buttonPanel = new JPanel();
         JButton startButton = new JButton("Start Simulation");
         JButton stopButton = new JButton("Stop Simulation");
+        JButton clearButton = new JButton("Clear Display");  // New clear button
 
-        startButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                startSimulation();
-            }
+        startButton.addActionListener(e -> startSimulation());
+        stopButton.addActionListener(e -> stopSimulation());
+        clearButton.addActionListener(e -> {
+            sentDataArea.setText("");
+            rawDataArea.setText("");
+            receivedDataArea.setText("");
         });
 
-        stopButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                stopSimulation();
-            }
-        });
-
-        JPanel buttonPanel = new JPanel();
         buttonPanel.add(startButton);
         buttonPanel.add(stopButton);
-        panel.add(buttonPanel, BorderLayout.SOUTH);
+        buttonPanel.add(clearButton);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        frame.add(panel);
+        frame.add(mainPanel);
         frame.setVisible(true);
     }
 
     private void startSimulation() {
-        // Configure the logger
         logger.setLevel(Level.INFO);
-
-        // Use COM3 port
         serialPort = SerialPort.getCommPort("COM3");
         serialPort.setComPortParameters(9600, 8, SerialPort.ONE_STOP_BIT, SerialPort.NO_PARITY);
-
-        // Increase read/write timeout to 10000 ms (10 seconds)
         serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 10000, 10000);
 
         if (serialPort.openPort()) {
             logger.info("Port opened successfully.");
+            StringBuilder rawDataBuilder = new StringBuilder();  // To accumulate raw data
 
-            // Simulate scale data in a separate thread
             simulationThread = new Thread(() -> {
                 try {
                     int weight = 0;
-                    int stableWeight = 100000; // Example stable weight
+                    int stableWeight = 100000;
                     int iterations = 0;
                     int stableIterations = 0;
-                    int maxStableIterations = 5; // Number of times to repeat 50000
+                    int maxStableIterations = 5;
 
                     while (!Thread.currentThread().isInterrupted()) {
-                        // Simulate data in the specified format
                         String formattedNumber = String.format("%07d1", weight);
-                        char startOfText = 2; // ASCII STX
-                        char endOfText = 3; // ASCII ETX
-                        String simulatedData = "+" + formattedNumber + "B" + startOfText + endOfText + "\r";
+                        char startOfText = 2;
+                        char endOfText = 3;
+                        String simulatedData = startOfText + "+" + formattedNumber + "B" + endOfText;
 
-                        // Display the simulated data in the sentDataArea
-                        SwingUtilities.invokeLater(() -> sentDataArea.append("Sent: " + simulatedData + "\n"));
+                        // Update formatted display (with \n for readability)
+                        SwingUtilities.invokeLater(() -> 
+                            sentDataArea.append("Sent: " + simulatedData + "\n"));
 
-                        // Send the simulated data to the serial port character by character
+                        // Update raw data display (continuous stream)
+                        rawDataBuilder.append(simulatedData);
+                        SwingUtilities.invokeLater(() -> 
+                            rawDataArea.setText(rawDataBuilder.toString()));
+
+                        // Send data to serial port
                         for (char ch : simulatedData.toCharArray()) {
                             serialPort.getOutputStream().write(ch);
                             serialPort.getOutputStream().flush();
-                            logger.info("Simulated Data Sent: " + ch);
+                            logger.info("Sent character: " + (int)ch);
                         }
 
-                        // Gradually change the weight to simulate the truck entering the scale
                         if (iterations < 50) {
-                            weight += (stableWeight - weight) / 10; // Adjust the divisor to control the speed of stabilization
+                            weight += (stableWeight - weight) / 10;
                         } else {
-                            weight = stableWeight; // Stabilize the weight
+                            weight = stableWeight;
                             stableIterations++;
                             if (stableIterations >= maxStableIterations) {
-                                weight = 0; // Reset the weight
-                                iterations = 0; // Reset the iterations
-                                stableIterations = 0; // Reset the stable iterations
+                                weight = 0;
+                                iterations = 0;
+                                stableIterations = 0;
                             }
                         }
 
                         iterations++;
-
-                        // Wait 1 second before sending the next data
                         Thread.sleep(1000);
                     }
                 } catch (Exception e) {
@@ -128,19 +145,19 @@ public class SimulatorGUI {
             simulationThread.setDaemon(true);
             simulationThread.start();
 
-            // Read data from the serial port
+            // Read thread
             new Thread(() -> {
                 byte[] buffer = new byte[1024];
                 while (!Thread.currentThread().isInterrupted()) {
                     try {
                         int bytesRead = serialPort.getInputStream().read(buffer);
                         if (bytesRead > 0) {
-                            String receivedData = new String(buffer, 0, bytesRead).trim();
-                            SwingUtilities.invokeLater(() -> receivedDataArea.append("Received: " + receivedData + "\n"));
-                            logger.info("Received: " + receivedData);
+                            String receivedData = new String(buffer, 0, bytesRead);
+                            SwingUtilities.invokeLater(() -> receivedDataArea.append(receivedData));
+                            logger.info("Received raw data: " + receivedData);
                         }
                     } catch (SerialPortTimeoutException e) {
-                        logger.warning("Read operation timed out after 10 seconds.");
+                        logger.warning("Read timeout after 10 seconds.");
                     } catch (Exception e) {
                         logger.log(Level.SEVERE, "Error reading from serial port", e);
                     }
