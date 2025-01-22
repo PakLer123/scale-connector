@@ -477,32 +477,84 @@ public class ScaleConnector {
 	 * @throws SerialPortException
 	 *             If timeout expires before connecting
 	 */
+//	public synchronized byte[] readBytes() throws Exception {
+//	    SerialPort sp = this.port;
+//	    if (!sp.isOpen() && !sp.openPort()) {
+//	        throw new Exception("Unable to open port: " + serialPort);
+//	    }
+//	    byte[] buffer = new byte[byteCount];
+//	    try {
+//	        sp.setBaudRate(baud);
+//	        sp.setNumDataBits(dataBits);
+//	        sp.setNumStopBits(stopBits);
+//	        sp.setParity(parity);
+//	        sp.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, timeout, timeout);
+//	
+//	        if (!sp.openPort()) {
+//	            throw new Exception("Unable to open port: " + serialPort);
+//	        }
+//	        int bytesRead = sp.readBytes(buffer, buffer.length);
+//	        if (bytesRead <= 0) {
+//	            log.warning("No data read from port.");
+//	            return new byte[0]; // Return an empty byte array if no data is read
+//	        }
+//	        log.info("Bytes Read: " + bytesRead);
+//	        log.info("Data: " + Arrays.toString(buffer));
+//	        return buffer;
+//	    } catch (Exception e) {
+//	        e.printStackTrace();
+//	        throw e;
+//	    } finally {
+//	        if (sp.isOpen()) {
+//	            sp.closePort();
+//	        }
+//	    }
+//	}
 	public synchronized byte[] readBytes() throws Exception {
 	    SerialPort sp = this.port;
+
 	    if (!sp.isOpen() && !sp.openPort()) {
 	        throw new Exception("Unable to open port: " + serialPort);
 	    }
+
 	    byte[] buffer = new byte[byteCount];
 	    try {
+	        // Configure the serial port
 	        sp.setBaudRate(baud);
 	        sp.setNumDataBits(dataBits);
 	        sp.setNumStopBits(stopBits);
 	        sp.setParity(parity);
 	        sp.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, timeout, timeout);
-	
+
+	        // Open the port if not already open
 	        if (!sp.openPort()) {
 	            throw new Exception("Unable to open port: " + serialPort);
 	        }
+
 	        int bytesRead = sp.readBytes(buffer, buffer.length);
 	        if (bytesRead <= 0) {
 	            log.warning("No data read from port.");
 	            return new byte[0]; // Return an empty byte array if no data is read
 	        }
+
+	        // Log raw data and interpret ASCII control characters
 	        log.info("Bytes Read: " + bytesRead);
-	        log.info("Data: " + Arrays.toString(buffer));
-	        return buffer;
+	        log.info("Raw Data: " + Arrays.toString(buffer));
+	        StringBuilder asciiRepresentation = new StringBuilder("ASCII Interpretation: ");
+	        for (int i = 0; i < bytesRead; i++) {
+	            int value = buffer[i] & 0xFF; // Ensure unsigned byte value
+	            if (value < 32 || value == 127) {
+	                asciiRepresentation.append(getAsciiMnemonic(value)).append(" ");
+	            } else {
+	                asciiRepresentation.append((char) value).append(" ");
+	            }
+	       }
+	        log.info(asciiRepresentation.toString());
+	        System.out.println("ASCII Representation: " + asciiRepresentation.toString());
+
+	        return Arrays.copyOf(buffer, bytesRead); // Return only the read bytes
 	    } catch (Exception e) {
-	        e.printStackTrace();
+	        log.severe("Error reading bytes: " + e.getMessage());
 	        throw e;
 	    } finally {
 	        if (sp.isOpen()) {
@@ -510,5 +562,25 @@ public class ScaleConnector {
 	        }
 	    }
 	}
+
+	
+     /**
+     * Get the ASCII mnemonic for a control character
+     * 
+     * @param code
+     *            The ASCII code of the control character
+     * @return The ASCII mnemonic of the control character
+     * **/
+	private String getAsciiMnemonic(int code) {
+	    switch (code) {
+	        case 2: return "STX";
+	        case 3: return "ETX";
+	        case 4: return "EOT";
+	        case 27: return "ESC";
+	        // Add more control characters as needed
+	        default: return "CTRL-" + code;
+	    }
+	}
+
 
 }

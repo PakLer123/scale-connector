@@ -21,7 +21,6 @@ public class SimulatorGUI {
 
     public SimulatorGUI() {
     	try {
- //           UIManager.setLookAndFeel(new CustomFlatLaf());
             UIManager.setLookAndFeel(new FlatDarculaLaf());
         } catch (UnsupportedLookAndFeelException e) {
             logger.log(Level.SEVERE, "Failed to set custom look and feel", e);
