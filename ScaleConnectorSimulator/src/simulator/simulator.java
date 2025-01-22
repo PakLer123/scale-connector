@@ -34,13 +34,20 @@ public class simulator {
 
                     while (true) {
                         // Simulate data in the specified format
-                        String formattedNumber = String.format("%08d1", weight);
-                        String simulatedData = formattedNumber + "B" + "\r";
+                    	String formattedNumber = String.format("%08d1", weight);
+                    	char startOfText = 2; // ASCII STX
+                    	char endOfText = 3; // ASCII ETX
+                    	String simulatedData = formattedNumber + "B" + startOfText + endOfText + "\r";
 
                         // Send the simulated data to the serial port
-                        serialPort.getOutputStream().write(simulatedData.getBytes());
-                        serialPort.getOutputStream().flush();
-                        logger.info("Simulated Data Sent: " + simulatedData.trim());
+
+	                     // Send the simulated data to the serial port character by character
+	                     for (char ch : simulatedData.toCharArray()) {
+	                         serialPort.getOutputStream().write(ch);
+	                         serialPort.getOutputStream().flush();
+	                         logger.info("Simulated Data Sent: " + ch);
+	                     }
+
 
                         // Gradually change the weight to simulate the truck entering the scale
                         if (iterations < 50) {
