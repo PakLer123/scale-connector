@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.ingeint.scaleconnector'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'org.jline:jline:3.25.0'
+    implementation 'com.fazecast:jSerialComm:2.9.2'
+    implementation 'com.formdev:flatlaf:2.0'
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation 'com.miglayout:miglayout-swing:5.2'
+}
+
+test {
+    useJUnitPlatform()
+}
