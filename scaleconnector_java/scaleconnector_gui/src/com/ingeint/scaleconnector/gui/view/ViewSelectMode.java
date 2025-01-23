@@ -16,6 +16,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.plaf.FontUIResource;
 
 import com.ingeint.scaleconnector.gui.controller.ControllerViewSelectMode;
 import com.ingeint.scaleconnector.gui.feature.SCUIFeature;
@@ -43,11 +45,14 @@ public class ViewSelectMode extends JFrame {
     public ViewSelectMode() {
         super("Scale Connector");
         System.out.println("Initializing ViewSelectMode...");
+        
+        // Set font
+        setUIFont(new FontUIResource(new Font("Segoe UI", Font.PLAIN, 12)));
 
         // Calculate dynamic dimensions
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = (int) (screenSize.width * 0.4);
-        int height = (int) (screenSize.height * 0.5);
+        int height = (int) (screenSize.height * 0.7);
 
         setLayout(new BorderLayout());
         setIconImage(SCUIStandard.ICON);
@@ -66,6 +71,7 @@ public class ViewSelectMode extends JFrame {
 
         // Set size and make visible
         setSize(width, height);
+        setLocationRelativeTo(null);
         System.out.println("ViewSelectMode initialized. Width = " + width + ", Height = " + height);
     }
 
@@ -90,7 +96,7 @@ public class ViewSelectMode extends JFrame {
         pnlCentral.setLayout(new MigLayout(
                 "wrap 1, insets 20, align center",
                 "[grow, center]",
-                "[]15[]15[]15[]"
+                "[]20[]20[]20[]"
         ));
         pnlCentral.setBorder(BorderFactory.createTitledBorder("Select Mode"));
 
@@ -161,5 +167,15 @@ public class ViewSelectMode extends JFrame {
 
     public DefaultComboBoxModel<String> getCmbModelSelectLocale() {
         return cmbModelSelectLocale;
+    }
+    private void setUIFont(FontUIResource f) {
+        java.util.Enumeration<Object> keys = UIManager.getDefaults().keys();
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            Object value = UIManager.get(key);
+            if (value instanceof FontUIResource) {
+                UIManager.put(key, f);
+            }
+        }
     }
 }

@@ -24,7 +24,6 @@
 
 package com.ingeint.scaleconnector.base;
 
-import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Enumeration;
@@ -34,8 +33,6 @@ import java.util.logging.Logger;
 import com.ingeint.scaleconnector.base.Request;
 import com.ingeint.scaleconnector.base.Response;
 import com.ingeint.scaleconnector.base.ResponseStatus;
-
-import jssc.SerialPortTimeoutException;
 
 /**
  * Build the response

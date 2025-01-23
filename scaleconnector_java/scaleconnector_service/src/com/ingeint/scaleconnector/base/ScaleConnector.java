@@ -26,16 +26,9 @@ package com.ingeint.scaleconnector.base;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.logging.Logger;
 
-//import jssc.SerialPort;
-//import jssc.SerialPortException;
-//import jssc.SerialPortTimeoutException;
 import com.fazecast.jSerialComm.SerialPort;
 
 /**
@@ -338,9 +331,12 @@ public class ScaleConnector {
 	        log.info("Configured end character: " + (char) endCharacter + " (" + endCharacter + ")");
 
 	        // Find positions of start and end characters
-	        int startIdx = string.indexOf((char) startCharacter);
-	        int endIdx = string.lastIndexOf((char) endCharacter);
-
+//	        int startIdx = string.indexOf((char) startCharacter);
+//	        int endIdx = string.lastIndexOf((char) endCharacter);
+        	
+	        int startIdx = string.indexOf((char) 2);
+	        int endIdx = string.lastIndexOf((char) 3);
+	        
 	        log.info("Start character index: " + startIdx);
 	        log.info("End character index: " + endIdx);
 
@@ -359,7 +355,7 @@ public class ScaleConnector {
 	        }
 
 	        // Extract substring between start and end characters
-	        String raw = string.substring(startIdx + 1, endIdx); // +1 to skip the start character
+	        String raw = string.substring(startIdx, endIdx); // +1 to skip the start character
 	        log.info("Raw value after extracting start and end positions: " + raw);
 
 	        // Apply start and end cut positions
@@ -373,10 +369,6 @@ public class ScaleConnector {
 
 	        String value = raw.substring(startCut, endCut);
 	        log.info("Value after applying cut positions: " + value);
-
-	        // Remove non-numeric characters if necessary
-	        value = value.replaceAll("[^0-9]", "");
-	        log.info("Numeric value after cleaning: " + value);
 
 	        // Apply floating-point adjustment if configured
 	        if (!value.isEmpty() && floatingPoint > 0) {
@@ -442,8 +434,12 @@ public class ScaleConnector {
 	                mostFrequentValue = entry.getKey();
 	            }
 	        }
-
-	        isStableValue = !mostFrequentValue.isEmpty() && mostFrequentValue.charAt(0) == stabilityValue;
+	        System.out.println(!mostFrequentValue.isEmpty());
+	        System.out.println(mostFrequentValue.toString());
+	        System.out.println(maxFrequency);
+	        System.out.println(stabilityValue);
+	        System.out.println(maxFrequency == stabilityValue);
+	        isStableValue = !mostFrequentValue.isEmpty() && maxFrequency == stabilityValue;
 	        return mostFrequentValue.isEmpty() ? "" : mostFrequentValue.substring(1);
 
 	    } catch (Exception e) {
@@ -464,6 +460,10 @@ public class ScaleConnector {
 	 */
 	public synchronized String readString() throws Exception {
 		byte[] buffer = readBytes();
+		if(buffer.length == 0) {
+			System.out.println("No buffer");
+			return "";
+		}
 		return new String(buffer);
 	}
 
@@ -477,31 +477,37 @@ public class ScaleConnector {
 	 *             If timeout expires before connecting
 	 */
 	public synchronized byte[] readBytes() throws Exception {
-		
 	    SerialPort sp = this.port;
-	    if(!sp.isOpen() && !sp.openPort()) {
-	    	throw new Exception("Unable to open port: " + serialPort);
+	    if (!sp.isOpen() && !sp.openPort()) {
+	        throw new Exception("Unable to open port: " + serialPort);
 	    }
 	    byte[] buffer = new byte[byteCount];
 	    try {
+	        // Configure the serial port
 	        sp.setBaudRate(baud);
 	        sp.setNumDataBits(dataBits);
 	        sp.setNumStopBits(stopBits);
 	        sp.setParity(parity);
 	        sp.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, timeout, timeout);
-
+	        // Open the port if not already open
 	        if (!sp.openPort()) {
 	            throw new Exception("Unable to open port: " + serialPort);
 	        }
 	        int bytesRead = sp.readBytes(buffer, buffer.length);
-	        if (bytesRead < 0) {
-	            throw new Exception("No data read from port.");
+	        if (bytesRead <= 0) {
+	            log.warning("No data read from port.");
+	            return new byte[0]; // Return an empty byte array if no data is read
 	        }
+	        // Log raw data and interpret ASCII control characters
 	        log.info("Bytes Read: " + bytesRead);
-	        log.info("Data: " + Arrays.toString(buffer));
-	        return buffer;
+	        log.info("Raw Data: " + Arrays.toString(buffer));
+	        //StringBuilder asciiRepresentation = new StringBuilder("ASCII Interpretation: ");
+	        String asciiRepresentation = AsciiTranslator.translate(buffer, bytesRead);
+	        log.info(asciiRepresentation);
+	        System.out.println("ASCII Representation: " + asciiRepresentation);
+	        return Arrays.copyOf(buffer, bytesRead); // Return only the read bytes
 	    } catch (Exception e) {
-	        e.printStackTrace();
+	        log.severe("Error reading bytes: " + e.getMessage());
 	        throw e;
 	    } finally {
 	        if (sp.isOpen()) {
