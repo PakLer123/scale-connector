@@ -133,8 +133,8 @@ public class ScaleConnector {
 	}
 
 	/**
-	 * @param Set
-	 *            number of readings
+	 * @param readings
+	 *
 	 */
 	public void setReadings(int readings) {
 		this.readings = readings;
