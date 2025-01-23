@@ -331,9 +331,12 @@ public class ScaleConnector {
 	        log.info("Configured end character: " + (char) endCharacter + " (" + endCharacter + ")");
 
 	        // Find positions of start and end characters
-	        int startIdx = string.indexOf((char) startCharacter);
-	        int endIdx = string.lastIndexOf((char) endCharacter);
-
+//	        int startIdx = string.indexOf((char) startCharacter);
+//	        int endIdx = string.lastIndexOf((char) endCharacter);
+        	
+	        int startIdx = string.indexOf((char) 2);
+	        int endIdx = string.lastIndexOf((char) 3);
+	        
 	        log.info("Start character index: " + startIdx);
 	        log.info("End character index: " + endIdx);
 
@@ -352,7 +355,7 @@ public class ScaleConnector {
 	        }
 
 	        // Extract substring between start and end characters
-	        String raw = string.substring(startIdx + 1, endIdx); // +1 to skip the start character
+	        String raw = string.substring(startIdx, endIdx); // +1 to skip the start character
 	        log.info("Raw value after extracting start and end positions: " + raw);
 
 	        // Apply start and end cut positions
@@ -366,10 +369,6 @@ public class ScaleConnector {
 
 	        String value = raw.substring(startCut, endCut);
 	        log.info("Value after applying cut positions: " + value);
-
-	        // Remove non-numeric characters if necessary
-	        value = value.replaceAll("[^0-9]", "");
-	        log.info("Numeric value after cleaning: " + value);
 
 	        // Apply floating-point adjustment if configured
 	        if (!value.isEmpty() && floatingPoint > 0) {
