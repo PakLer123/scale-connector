@@ -30,6 +30,9 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import com.fazecast.jSerialComm.SerialPort;
+import com.fazecast.jSerialComm.SerialPortTimeoutException;
+import com.fazecast.jSerialComm.*;
+
 import com.ingeint.scaleconnector.base.util.AsciiTranslator;
 
 /**
@@ -323,6 +326,15 @@ public class ScaleConnector {
         port.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, timeout, timeout);
         
     }
+
+	/**
+	 * Processes the input string to extract a value between the specified start and end characters.
+	 *
+	 * @param string The input string to process.
+	 * @param startCharacter The character indicating the start of the value.
+	 * @param endCharacter The character indicating the end of the value.
+	 * @return The processed value as a string, or an empty string if the value cannot be extracted.
+	 */
 	private String getValue(String string, char startCharacter, char endCharacter) {
 	    log.info("Input string for processing: " + string);
 
@@ -389,14 +401,9 @@ public class ScaleConnector {
 	}
 
 	/**
-	 * Read bytes from the serial port and return the value. This method uses
-	 * the readings for select the value
-	 * 
+	 * Read the value from the serial port
+	 *
 	 * @return Value
-	 * @throws SerialPortException
-	 *             If an error occurred when reading from the input stream
-	 * @throws SerialPortTimeoutException
-	 *             If timeout expires before connecting
 	 */
 	public synchronized String readValue() {
 	    HashMap<String, Integer> frequencyMap = new HashMap<>();
