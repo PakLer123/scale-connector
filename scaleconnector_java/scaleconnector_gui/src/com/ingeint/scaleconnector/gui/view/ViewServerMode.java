@@ -346,8 +346,20 @@ public class ViewServerMode extends JFrame {
 
 		pnlEast.add(pnlBytesRead, "width 230, height 100%");
 
+		// In the ViewServerMode constructor, after initializing the table model and table
 		tblModelBytesRead = new DefaultTableModel();
+		tblModelBytesRead.setColumnIdentifiers(new Object[] { "POS", "CHAR", "INT", "HEX", "ASCII" }); // Set column identifiers here
 		tblBytesRead = new JTable(tblModelBytesRead);
+		tblBytesRead.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); // Disable auto-resize to manually set column widths
+
+		// Set preferred column widths
+		tblBytesRead.getColumnModel().getColumn(0).setPreferredWidth(50);  // POS
+		tblBytesRead.getColumnModel().getColumn(1).setPreferredWidth(50);  // CHAR
+		tblBytesRead.getColumnModel().getColumn(2).setPreferredWidth(50);  // INT
+		tblBytesRead.getColumnModel().getColumn(3).setPreferredWidth(50);  // HEX
+		tblBytesRead.getColumnModel().getColumn(4).setPreferredWidth(150); // ASCII (make this column wider)
+
+		// Add the table to a scroll pane
 		JScrollPane scrollBytesRead = new JScrollPane(tblBytesRead);
 		pnlBytesRead.add(scrollBytesRead, "width 100%, height 100%");
 
