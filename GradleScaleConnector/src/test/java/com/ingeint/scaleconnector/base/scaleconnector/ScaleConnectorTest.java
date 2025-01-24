@@ -5,7 +5,7 @@
 //import org.junit.jupiter.api.Test;
 //import org.mockito.Mockito;
 //import com.fazecast.jSerialComm.SerialPort;
-////import com.fazecast.jSerialComm.SerialPortException;
+//import com.fazecast.jSerialComm.SerialPortIOException;
 //import com.fazecast.jSerialComm.SerialPortTimeoutException;
 //import java.io.ByteArrayInputStream;
 //
@@ -18,7 +18,6 @@
 //    public void setUp() {
 //        mockSerialPort = Mockito.mock(SerialPort.class);
 //        scaleConnector = new ScaleConnector("COM1", 9600, 8, 1, 0, (char) 2, (char) 3);
-//        //scaleConnector.port = mockSerialPort;
 //        scaleConnector.setSerialPort(mockSerialPort.getDescriptivePortName());
 //    }
 //
@@ -50,18 +49,18 @@
 //        assertFalse(scaleConnector.isStableValue());
 //    }
 //
-////    @Test
-////    void readValueHandlesSerialPortException() throws Exception {
-////        Mockito.when(mockSerialPort.isOpen()).thenReturn(true);
-////        Mockito.when(mockSerialPort.readBytes(Mockito.any(byte[].class), Mockito.anyInt()))
-////                .thenThrow(new SerialPortException("COM1" + "readBytes" + "Test Timeout"));
-////
-////        scaleConnector.setReadings(5);
-////
-////        String result = scaleConnector.readValue();
-////        assertEquals("", result);
-////        assertFalse(scaleConnector.isStableValue());
-////    }
+//    @Test
+//    void readValueHandlesSerialPortException() throws Exception {
+//        Mockito.when(mockSerialPort.isOpen()).thenReturn(true);
+//        Mockito.when(mockSerialPort.readBytes(Mockito.any(byte[].class), Mockito.anyInt()))
+//                .thenThrow(new SerialPortIOException("COM1" + "readBytes" + "Test Exception"));
+//
+//        scaleConnector.setReadings(5);
+//
+//        String result = scaleConnector.readValue();
+//        assertEquals("", result);
+//        assertFalse(scaleConnector.isStableValue());
+//    }
 //
 //    @Test
 //    void readValueHandlesSerialPortTimeoutException() throws Exception {

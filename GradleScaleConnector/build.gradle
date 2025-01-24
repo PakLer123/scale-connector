@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id 'edu.sc.seis.launch4j' version '3.0.6'
 }
 
 group = 'com.ingeint.scaleconnector'
@@ -9,9 +10,17 @@ version = '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
 }
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
 application {
     mainClass = 'com.ingeint.scaleconnector.gui.app.Main'
 }
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'org.jline:jline:3.25.0'
@@ -25,10 +34,24 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:5.0.0'
     testImplementation 'org.mockito:mockito-junit-jupiter:5.0.0'
 }
+
+//launch4j {
+//    headerType = 'gui'
+//    mainClassName = 'com.ingeint.scaleconnector.gui.app.Main'
+//    jarTask = tasks.named('jar') // Link to the jar task
+//    outfile = "Main.exe"
+//    icon = 'src/main/resources/image/logo.png' // Icon for the executable
+//    jvmOptions = ['-Dfile.encoding=UTF-8'] // JVM options
+//    maxHeapSize = 512 // Maximum heap size in MB
+//    windresPath = "C:/MinGW/bin/windres.exe" // Replace with your MinGW path
+//}
+
+
+
 jar {
     manifest {
         attributes(
-                'Main-Class': 'com.ingeint.scaleconnector.gui.app.Main' // Replace with your main class
+                'Main-Class': 'com.ingeint.scaleconnector.gui.app.Main'
         )
     }
     from {
@@ -36,6 +59,20 @@ jar {
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
+
 test {
     useJUnitPlatform()
 }
+
+//tasks.register('createNativeExecutable', Exec) {
+//    dependsOn 'jar'
+//
+//    commandLine 'jpackage',
+//            '--input', "../libs",
+//            '--dest', "../native",
+//            '--name', 'ScaleConnector',
+//            '--main-jar', jar.archiveFileName.get(),
+//            '--main-class', 'com.ingeint.scaleconnector.gui.app.Main',
+//            '--icon', 'src/main/resources/image/logo.png',
+//            '--type', 'exe'
+//}

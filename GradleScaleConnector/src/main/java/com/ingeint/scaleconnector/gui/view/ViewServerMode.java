@@ -506,4 +506,11 @@ public class ViewServerMode extends JFrame {
 	}
 
 
+	public Iterable<? extends AbstractButton> getButtons() {
+		return buttons;
+	}
+
+	public Iterable<? extends JMenuItem> getMenuItems() {
+		return menuItems;
+	}
 }
