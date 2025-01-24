@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortTimeoutException;
+import com.fazecast.jSerialComm.*;
 
 import com.ingeint.scaleconnector.base.util.AsciiTranslator;
 
@@ -462,6 +463,7 @@ public class ScaleConnector {
 	 * Read string from the serial port
 	 * 
 	 * @return String
+	 * @throws SerialPortException
 	 *             If an error occurred when reading from the input stream
 	 * @throws SerialPortTimeoutException
 	 *             If timeout expires before connecting
@@ -481,8 +483,8 @@ public class ScaleConnector {
 	 * @return Bytes
 	 * @throws SerialPortTimeoutException
 	 *             If an error occurred when reading from the input stream
-	 *
-	 *
+	 * @throws SerialPortException
+	 *             If timeout expires before connecting
 	 */
 	public synchronized byte[] readBytes() throws Exception {
 	    SerialPort sp = this.port;
