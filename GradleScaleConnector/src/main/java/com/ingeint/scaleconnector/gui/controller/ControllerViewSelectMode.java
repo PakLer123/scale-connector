@@ -1,27 +1,3 @@
-/**
- * This file is part of Scale Connector.
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- * 
- * Copyright (C) 2015 INGEINT <http://www.ingeint.com>.
- * Copyright (C) Contributors.
- * 
- * Contributors:
- *    - 2015 Saúl Piña <spina@ingeint.com>.
- */
-
 package com.ingeint.scaleconnector.gui.controller;
 
 import java.awt.event.ActionEvent;
@@ -39,7 +15,7 @@ import com.ingeint.scaleconnector.gui.view.ViewSelectMode;
 
 public class ControllerViewSelectMode implements ActionListener, WindowListener, ItemListener {
 
-	private static Logger logger = Logger.getLogger(ControllerViewSelectMode.class.getName());
+	private static final Logger logger = Logger.getLogger(ControllerViewSelectMode.class.getName());
 	private ViewSelectMode viewSelectMode;
 
 	public ControllerViewSelectMode() {
@@ -48,22 +24,30 @@ public class ControllerViewSelectMode implements ActionListener, WindowListener,
 			viewSelectMode = new ViewSelectMode();
 			logger.info("ViewSelectMode initialized successfully");
 			viewSelectMode.setVisible(true);
-			System.out.println("ViewSelectMode dimensions after setVisible: Width = " +
-                    viewSelectMode.getWidth() + ", Height = " + viewSelectMode.getHeight());
+			logViewDimensions();
 		} catch (Exception e) {
-			logger.severe("Error initializing ViewSelectMode:" );
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Failed to initialize the user interface.", "Error", JOptionPane.ERROR_MESSAGE);
-			System.exit(1);
+			handleInitializationError(e);
 		}
 		viewSelectMode.addListener(this);
 		viewSelectMode.setVisible(true);
 		logger.info("ControllerViewSelectMode is now visible");
 	}
 
+	private void logViewDimensions() {
+		logger.info(String.format("ViewSelectMode dimensions after setVisible: Width = %d, Height = %d",
+				viewSelectMode.getWidth(), viewSelectMode.getHeight()));
+	}
+
+	private void handleInitializationError(Exception e) {
+		logger.severe("Error initializing ViewSelectMode: " + e.getMessage());
+		e.printStackTrace();
+		JOptionPane.showMessageDialog(null, "Failed to initialize the user interface.", "Error", JOptionPane.ERROR_MESSAGE);
+		System.exit(1);
+	}
+
 	public void close() {
 		logger.info("Closing ViewSelectMode...");
-		if(viewSelectMode != null) {
+		if (viewSelectMode != null) {
 			viewSelectMode.dispose();
 		}
 		System.exit(0);
@@ -77,21 +61,29 @@ public class ControllerViewSelectMode implements ActionListener, WindowListener,
 			return;
 		}
 		try {
-			if (e.getSource().equals(viewSelectMode.getBtnClient())) {
-				logger.info("Client Mode activated. ");
-				new ControllerViewClientMode();
-				viewSelectMode.dispose();
-			} else if (e.getSource().equals(viewSelectMode.getBtnServer())) {
-				logger.info("Server Mode selected");
-				new ControllerViewServerMode();
-				logger.info("ControllerViewServerMode Initialized succssfully");
-				viewSelectMode.dispose();
-			}
-		} catch(Exception ex) {
-			logger.severe("Error while processing action: " + ex.getMessage());
-			ex.printStackTrace();
-	        JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			handleActionEvent(e);
+		} catch (Exception ex) {
+			handleActionError(ex);
 		}
+	}
+
+	private void handleActionEvent(ActionEvent e) {
+		if (e.getSource().equals(viewSelectMode.getBtnClient())) {
+			logger.info("Client Mode activated.");
+			new ControllerViewClientMode();
+			viewSelectMode.dispose();
+		} else if (e.getSource().equals(viewSelectMode.getBtnServer())) {
+			logger.info("Server Mode selected");
+			new ControllerViewServerMode();
+			logger.info("ControllerViewServerMode Initialized successfully");
+			viewSelectMode.dispose();
+		}
+	}
+
+	private void handleActionError(Exception ex) {
+		logger.severe("Error while processing action: " + ex.getMessage());
+		ex.printStackTrace();
+		JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 	}
 
 	@Override
@@ -134,28 +126,38 @@ public class ControllerViewSelectMode implements ActionListener, WindowListener,
 	public void itemStateChanged(ItemEvent ie) {
 		logger.info("Locale selection changed.");
 		if (viewSelectMode == null || viewSelectMode.getCmbModelSelectLocale() == null) {
-            logger.severe("Locale combo box is not initialized.");
-            return;
-        }
+			logger.severe("Locale combo box is not initialized.");
+			return;
+		}
 		try {
-			String locale = viewSelectMode.getCmbModelSelectLocale().getSelectedItem().toString();
-			logger.info("Selected locale: " + locale);
-			SCUILocale.load();
-			SCUIFeature.set("DEFAULT_LOCALE", locale);
-			viewSelectMode.loadLocale();
-			try {
-				SCUIFeature.save();
-				logger.info("Locale settings saved successfully.");
-			} catch (Exception ex) {
-				logger.info("Unsaved settings");
-				logger.warning("Failed to save settings: " );
-			}
+			updateLocale();
 		} catch (Exception e) {
-			logger.severe("Error loading locale" + e.getMessage());
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, SCUILocale.get("ViewSelectMode.errorLocale"), "Error", JOptionPane.ERROR_MESSAGE);
-			System.exit(0);
+			handleLocaleError(e);
 		}
 	}
 
+	private void updateLocale() throws Exception {
+		String locale = viewSelectMode.getCmbModelSelectLocale().getSelectedItem().toString();
+		logger.info("Selected locale: " + locale);
+		SCUILocale.load();
+		SCUIFeature.set("DEFAULT_LOCALE", locale);
+		viewSelectMode.loadLocale();
+		saveLocaleSettings();
+	}
+
+	private void saveLocaleSettings() {
+		try {
+			SCUIFeature.save();
+			logger.info("Locale settings saved successfully.");
+		} catch (Exception ex) {
+			logger.warning("Failed to save settings: " + ex.getMessage());
+		}
+	}
+
+	private void handleLocaleError(Exception e) {
+		logger.severe("Error loading locale: " + e.getMessage());
+		e.printStackTrace();
+		JOptionPane.showMessageDialog(null, SCUILocale.get("ViewSelectMode.errorLocale"), "Error", JOptionPane.ERROR_MESSAGE);
+		System.exit(0);
+	}
 }

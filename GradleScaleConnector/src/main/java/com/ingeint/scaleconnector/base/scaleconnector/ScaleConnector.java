@@ -56,7 +56,7 @@ import javax.swing.*;
  *      > http://en.wikibooks.org/wiki/Serial_Programming/RS-232_Connections</a>
  * 
  */
-public class ScaleConnector {
+public class ScaleConnector{
 
 	private final static Logger log = Logger.getLogger(ScaleConnector.class.getName());
 
@@ -463,7 +463,7 @@ public class ScaleConnector {
 	 * Read string from the serial port
 	 * 
 	 * @return String
-	 * @throws SerialPortException
+	 *
 	 *             If an error occurred when reading from the input stream
 	 * @throws SerialPortTimeoutException
 	 *             If timeout expires before connecting
@@ -483,7 +483,7 @@ public class ScaleConnector {
 	 * @return Bytes
 	 * @throws SerialPortTimeoutException
 	 *             If an error occurred when reading from the input stream
-	 * @throws SerialPortException
+	 *
 	 *             If timeout expires before connecting
 	 */
 	public synchronized byte[] readBytes() throws Exception {
