@@ -35,6 +35,8 @@ import com.fazecast.jSerialComm.*;
 
 import com.ingeint.scaleconnector.base.util.AsciiTranslator;
 
+import javax.swing.*;
+
 /**
  * Reads the serial port of the scale.
  * 
@@ -499,11 +501,13 @@ public class ScaleConnector {
 	        sp.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, timeout, timeout);
 	        // Open the port if not already open
 	        if (!sp.openPort()) {
+				JOptionPane.showMessageDialog(null, "Unable to open port: " + serialPort, "Warning", JOptionPane.WARNING_MESSAGE);
 	            throw new Exception("Unable to open port: " + serialPort);
 	        }
 	        int bytesRead = sp.readBytes(buffer, buffer.length);
 	        if (bytesRead <= 0) {
 	            log.warning("No data read from port.");
+				JOptionPane.showMessageDialog(null, "No data read from port.", "Warning", JOptionPane.WARNING_MESSAGE);
 	            return new byte[0]; // Return an empty byte array if no data is read
 	        }
 	        // Log raw data and interpret ASCII control characters
