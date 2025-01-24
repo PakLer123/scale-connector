@@ -56,7 +56,12 @@ public class ControllerViewServerMode implements ActionListener, WindowListener 
 	private ViewServerMode viewServerMode;
 	private Server server;
 	private volatile boolean isStreaming = false;
-
+	ViewServerMode getViewServerMode() {
+		return viewServerMode;
+	}
+	Server server() {
+		return server;
+	}
 	private static Logger logger = Logger.getLogger(ControllerViewServerMode.class.getName());
 
 	public ControllerViewServerMode() {

@@ -59,9 +59,7 @@ public class SCUIFeature {
             }
         }
     }
-
-
-
+    
     public static String get(String key) {
         return properties.getProperty(key);
     }
@@ -74,26 +72,7 @@ public class SCUIFeature {
         properties.put(key, value);
     }
 
-//    public static void save() throws IOException {
-//        // Save the properties to the external file in the user's home directory
-//        File externalFile = new File(EXTERNAL_PROPERTIES_FILE);
-//        try (FileOutputStream fileOutput = new FileOutputStream(externalFile)) {
-//            properties.store(fileOutput, "SCALE CONNECTOR - External Properties File");
-//            System.out.println("Properties saved to: " + EXTERNAL_PROPERTIES_FILE);
-//        } catch (IOException e) {
-//            throw new IOException("Failed to save properties to external file: " + EXTERNAL_PROPERTIES_FILE, e);
-//        }
-//    }
-//    public static void save() throws IOException {
-//        // Get the path to the properties file in the project directory
-//        File projectDirFile = new File(SCUIFeature.class.getClassLoader().getResource(PROPERTIES_FILE).getPath());
-//        try (FileOutputStream fileOutput = new FileOutputStream(projectDirFile)) {
-//            properties.store(fileOutput, "SCALE CONNECTOR - Project Directory Properties File");
-//            System.out.println("Properties saved to: " + projectDirFile.getAbsolutePath());
-//        } catch (IOException e) {
-//            throw new IOException("Failed to save properties to project directory file: " + projectDirFile.getAbsolutePath(), e);
-//        }
-//    }
+
     public static void save() throws IOException {
         File externalFile = new File(EXTERNAL_PROPERTIES_FILE);
 
