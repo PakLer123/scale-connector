@@ -29,8 +29,9 @@ when goods are received or shipped.
   [jSerialComm](https://fazecast.github.io/jSerialComm/), with a fat-jar build.
 - **New UI:** [FlatLaf](https://www.formdev.com/flatlaf/) look and feel with dark
   mode.
-- **Testing and CI:** unit tests with JUnit 5 and Mockito, run on every push by
-  GitHub Actions.
+- **Testing and CI:** unit tests with JUnit 5 and Mockito (including the
+  serial-port reading and parsing logic, using a mocked port), run on every
+  push by GitHub Actions.
 - **Team workflow:** each feature was tracked as a GitHub issue and merged
   through a pull request.
 
@@ -39,8 +40,8 @@ when goods are received or shipped.
 ```
  ┌──────────┐  RS-232   ┌──────────────────────┐   TCP    ┌──────────────┐
  │  Scale / │ ────────▶ │   Scale Connector    │ ───────▶ │  Client mode │
- │  sensor  │  serial   │    (server mode)     │  :5000   │  or ERP via  │
- └──────────┘           │ parse → stabilize →  │          │  web service │
+ │  sensor  │  serial   │    (server mode)     │  :5000   │  or the ERP  │
+ └──────────┘           │ parse → stabilize →  │          │              │
                         │      serve value     │          └──────────────┘
                         └──────────────────────┘
 ```
@@ -58,7 +59,6 @@ The connector runs in one of two modes:
 | --- | --- |
 | `GradleScaleConnector/` | The main application (GUI and console, server and client modes) |
 | `SCSimulator/` | Scale simulator for testing without hardware |
-| `ScaleConnectorWebService/` | HTTP bridge for the ERP (being migrated to embedded Tomcat, still in progress) |
 
 ## Getting started
 
