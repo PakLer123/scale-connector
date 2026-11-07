@@ -24,9 +24,7 @@
 
 package com.ingeint.scaleconnector.gui.app;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -315,35 +313,26 @@ public class Main {
     }
 
     private static void commandHost() {
-        String os = SCUIFeature.get("OS");
+        String os = System.getProperty("os.name");
         System.out.println("Operative system: " + os);
         System.out.println("Port TCP Server: " + SCUIFeature.get("DEFAULT_PORT"));
 
+        String osName = os.toLowerCase();
+        String[] command;
+        if (osName.contains("windows")) {
+            command = new String[] { "ipconfig", "/all" };
+        } else if (osName.contains("linux")) {
+            command = new String[] { "ip", "addr" };
+        } else if (osName.contains("mac")) {
+            command = new String[] { "ifconfig" };
+        } else {
+            logger.warning("Unknown operative system to display network configuration");
+            return;
+        }
+
         try {
-            if (os.toLowerCase().contains("windows")) {
-                Process p = Runtime.getRuntime().exec("ipconfig /all");
-                InputStream out = new BufferedInputStream(p.getInputStream());
-                StringBuffer buffer = new StringBuffer();
-                int c;
-                while ((c = out.read()) != -1) {
-                    buffer.append((char) c);
-                }
-                out.close();
-                System.out.println(buffer.toString());
-            } else if (os.toLowerCase().contains("linux")) {
-                System.out.println();
-                Process p = Runtime.getRuntime().exec("ifconfig");
-                InputStream out = new BufferedInputStream(p.getInputStream());
-                StringBuffer buffer = new StringBuffer();
-                int c;
-                while ((c = out.read()) != -1) {
-                    buffer.append((char) c);
-                }
-                out.close();
-                System.out.println(buffer.toString());
-            } else {
-                logger.warning("Unknown operative system to display network configuration");
-            }
+            System.out.println();
+            new ProcessBuilder(command).inheritIO().start().waitFor();
         } catch (Exception e) {
             logger.severe("Error, command not complete");
             e.printStackTrace();

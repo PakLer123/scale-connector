@@ -29,11 +29,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 public abstract class HelperDate {
-	private static SimpleDateFormat sdf;
-
 	public static String format(Date date, String format) {
-		sdf = new SimpleDateFormat(format);
-		return sdf.format(date);
+		return new SimpleDateFormat(format).format(date);
 	}
 
 	public static Date now() {
@@ -41,8 +38,7 @@ public abstract class HelperDate {
 	}
 
 	public static String nowFormat(String format) {
-		sdf = new SimpleDateFormat(format);
-		return sdf.format(Calendar.getInstance().getTime());
+		return format(now(), format);
 	}
 
 	public static Date future(int field, int quantity) {

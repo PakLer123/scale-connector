@@ -449,7 +449,7 @@ public class ScaleConnector {
 	                continue;
 	            }
 
-	            frequencyMap.put(processedValue, frequencyMap.getOrDefault(processedValue, 0) + 1);
+	            frequencyMap.merge(processedValue, 1, Integer::sum);
 	        }
 
 	        // Determine the most frequent value

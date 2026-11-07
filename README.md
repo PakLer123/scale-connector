@@ -12,7 +12,8 @@ when goods are received or shipped.
 > **About this project:** this repository extends the open-source
 > [Scale Connector](https://wiki.idempiere.org/en/Plugin:_Scale_Connector)
 > by INGEINT (2015, GPL-2.0). I modernized and extended it during my
-> internship in January 2025. The changes I made are listed below.
+> internship in January 2025, and later upgraded it to Java 25. The changes I
+> made are listed below.
 
 ## What I built
 
@@ -25,13 +26,17 @@ when goods are received or shipped.
 - **Hardware simulator (`SCSimulator`):** a Swing app that emulates a scale on a
   serial port, so the connector can be developed and tested without physical
   hardware.
-- **Modernized build:** moved from Eclipse/JSSC/Java 11 to Gradle, Java 21 and
+- **Modernized build:** moved from Eclipse/JSSC/Java 11 to Gradle, Java 25 and
   [jSerialComm](https://fazecast.github.io/jSerialComm/), with a fat-jar build.
+- **Safer, lighter TCP server:** one virtual thread per connection, a
+  deserialization filter that only accepts the protocol's own classes (blocking
+  Java deserialization attacks), and fixes for leaked sockets and a shutdown
+  race.
 - **New UI:** [FlatLaf](https://www.formdev.com/flatlaf/) look and feel with dark
   mode.
-- **Testing and CI:** unit tests with JUnit 5 and Mockito (including the
-  serial-port reading and parsing logic, using a mocked port), run on every
-  push by GitHub Actions.
+- **Testing and CI:** JUnit and Mockito tests for the serial-port reading and
+  parsing logic (using a mocked port), plus end-to-end client/server tests, run
+  on every push by GitHub Actions.
 - **Team workflow:** each feature was tracked as a GitHub issue and merged
   through a pull request.
 
@@ -53,6 +58,10 @@ The connector runs in one of two modes:
   several readings, and answers requests over TCP.
 - **Client mode:** connects to a running server and shows its readings.
 
+Start and end characters can be entered as a character code (`2`), a control
+character name (`STX`) or a single literal character (`+`). The default is
+STX/ETX, which most scales use.
+
 ## Project structure
 
 | Folder | Description |
@@ -62,7 +71,7 @@ The connector runs in one of two modes:
 
 ## Getting started
 
-Requirements: a JDK (17 or newer) to run Gradle. Gradle downloads Java 21 for
+Requirements: a JDK (17 or newer) to run Gradle. Gradle downloads Java 25 for
 the build automatically.
 
 ```bash

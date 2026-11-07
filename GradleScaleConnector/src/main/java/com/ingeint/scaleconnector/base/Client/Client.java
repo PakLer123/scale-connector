@@ -32,9 +32,11 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URLEncoder;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,6 +47,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.ingeint.scaleconnector.base.core.ProtocolFilter;
 import com.ingeint.scaleconnector.base.core.Request;
 import com.ingeint.scaleconnector.base.core.Response;
 import com.ingeint.scaleconnector.base.core.ResponseStatus;
@@ -208,12 +211,11 @@ public class Client {
 	        Iterator<String> i = request.getParameters().keySet().iterator();
 	        while (i.hasNext()) {
 	            String p = i.next();
-	            parameters += "&" + p + "=" + request.getParameter(p);
+	            parameters += "&" + p + "=" + URLEncoder.encode(request.getParameter(p), StandardCharsets.UTF_8);
 	        }
 
 	        String url = String.format("%s://%s:%s%s?%s", protocol, host, port, uri, parameters);
-	        URL urlInput = new URL(url);
-	        URLConnection con = urlInput.openConnection();
+	        URLConnection con = URI.create(url).toURL().openConnection();
 	        con.setConnectTimeout(timeout);
 	        con.setReadTimeout(timeout);
 
@@ -254,18 +256,19 @@ public class Client {
 	        }
 	    } else {
 	        // Socket Mode
-	        Socket socket = new Socket();
-	        socket.connect(new InetSocketAddress(host, port), timeout);
-	        socket.setSoTimeout(timeout);
+	        try (Socket socket = new Socket()) {
+	            socket.connect(new InetSocketAddress(host, port), timeout);
+	            socket.setSoTimeout(timeout);
 
-	        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-	        out.writeObject(request);
-	        out.flush();
-	        logger.info("Data sent");
+	            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+	            out.writeObject(request);
+	            out.flush();
+	            logger.info("Data sent");
 
-	        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-	        Object readObject = in.readObject();
-	        response = readObject.getClass().equals(Response.class) ? (Response) readObject : null;
+	            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+	            in.setObjectInputFilter(ProtocolFilter.FILTER);
+	            response = in.readObject() instanceof Response r ? r : null;
+	        }
 
 	        // Debugging Logs
 	        logger.info("Data received");
@@ -299,10 +302,6 @@ public class Client {
 	        } else {
 	            logger.warning("Response is null");
 	        }
-
-	        out.close();
-	        in.close();
-	        socket.close();
 	    }
 	    return response;
 	}

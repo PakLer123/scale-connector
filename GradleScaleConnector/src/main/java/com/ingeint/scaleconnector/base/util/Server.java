@@ -30,7 +30,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -45,9 +46,9 @@ public class Server implements Runnable {
 
 	private int port;
 	private ServerSocket serverSocket;
-	private boolean run;
+	private volatile boolean run;
 	private Thread thread;
-	private Vector<ResponseExecutor> responses;
+	private final List<ResponseExecutor> responses;
 	private int timeout;
 
 	/**
@@ -91,7 +92,7 @@ public class Server implements Runnable {
 	public Server(int port) {
 		this.port = port;
 		thread = new Thread(this);
-		responses = new Vector<ResponseExecutor>();
+		responses = new ArrayList<>();
 		timeout = 1000;
 	}
 
@@ -122,8 +123,9 @@ public class Server implements Runnable {
 	public synchronized void stop() throws InterruptedException, IOException {
 		if (thread.isAlive()) {
 			run = false;
-			thread.join(timeout);
+			// Closing the socket unblocks accept(), so the thread can exit right away
 			serverSocket.close();
+			thread.join(timeout);
 			logger.info("Stoping server");
 		}
 	}
@@ -177,6 +179,9 @@ public class Server implements Runnable {
 			} catch (SocketTimeoutException ste) {
 				// NOTHING
 			} catch (Exception e) {
+				if (!run) {
+					break; // Socket closed by stop()
+				}
 				logger.warning("Error connecting to client");
 				e.printStackTrace();
 			}

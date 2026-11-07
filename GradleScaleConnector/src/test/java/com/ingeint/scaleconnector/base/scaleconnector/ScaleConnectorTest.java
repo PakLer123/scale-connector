@@ -2,7 +2,7 @@ package com.ingeint.scaleconnector.base.scaleconnector;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class ScaleConnectorTest {
 
     /** Makes the mock port return the given frames, one per read. */
     private void portSends(String... frames) {
-        OngoingStubbing<Integer> stub = when(mockSerialPort.readBytes(any(byte[].class), anyLong()));
+        OngoingStubbing<Integer> stub = when(mockSerialPort.readBytes(any(byte[].class), anyInt()));
         for (String frame : frames) {
             stub = stub.thenAnswer(invocation -> {
                 byte[] buffer = invocation.getArgument(0);
@@ -62,7 +62,7 @@ public class ScaleConnectorTest {
 
     @Test
     void readBytesWarnsAndReturnsEmptyWhenNoDataIsRead() throws Exception {
-        when(mockSerialPort.readBytes(any(byte[].class), anyLong())).thenReturn(0);
+        when(mockSerialPort.readBytes(any(byte[].class), anyInt())).thenReturn(0);
 
         assertEquals(0, scaleConnector.readBytes().length);
         assertEquals(List.of("No data read from port."), warnings);
@@ -95,7 +95,7 @@ public class ScaleConnectorTest {
 
     @Test
     void readStringReturnsEmptyWhenNoDataIsRead() throws Exception {
-        when(mockSerialPort.readBytes(any(byte[].class), anyLong())).thenReturn(0);
+        when(mockSerialPort.readBytes(any(byte[].class), anyInt())).thenReturn(0);
 
         assertEquals("", scaleConnector.readString());
     }
@@ -159,7 +159,7 @@ public class ScaleConnectorTest {
 
     @Test
     void readValueSkipsReadingsThatFail() {
-        when(mockSerialPort.readBytes(any(byte[].class), anyLong()))
+        when(mockSerialPort.readBytes(any(byte[].class), anyInt()))
                 .thenThrow(new RuntimeException("Test Exception"))
                 .thenAnswer(invocation -> {
                     byte[] bytes = frame("100").getBytes();
@@ -175,7 +175,7 @@ public class ScaleConnectorTest {
 
     @Test
     void readValueReturnsEmptyWhenNoDataIsRead() {
-        when(mockSerialPort.readBytes(any(byte[].class), anyLong())).thenReturn(0);
+        when(mockSerialPort.readBytes(any(byte[].class), anyInt())).thenReturn(0);
         scaleConnector.setReadings(3);
 
         assertEquals("", scaleConnector.readValue());
