@@ -40,8 +40,8 @@ public class ResponseExecutor implements Runnable {
 
 	private static Logger logger = Logger.getLogger(Server.class.getName());
 
-	private Thread thread;
-	private Socket socket;
+	private final Thread thread;
+	private final Socket socket;
 	private Server server;
 	private static final ResponseBuilder rb = new ResponseBuilder();
 
@@ -68,7 +68,7 @@ public class ResponseExecutor implements Runnable {
 	 */
 	public ResponseExecutor(Socket socket) {
 		this.socket = socket;
-		thread = new Thread(this);
+		thread = Thread.ofVirtual().name("response-executor").unstarted(this);
 	}
 
 	/**
@@ -91,10 +91,11 @@ public class ResponseExecutor implements Runnable {
 	@Override
 	public void run() {
 
-		try {
-			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-			Object readObject = in.readObject();
-			Request request = readObject.getClass().equals(Request.class) ? (Request) readObject : null;
+		try (socket;
+				ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+				ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
+			in.setObjectInputFilter(ProtocolFilter.FILTER);
+			Request request = in.readObject() instanceof Request r ? r : null;
 			logger.info("Request received");
 
 			Response response;
@@ -106,18 +107,16 @@ public class ResponseExecutor implements Runnable {
 			} else {
 				response = rb.build(request);
 			}
-			ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 			out.writeObject(response);
 			out.flush();
 			logger.info("Response sent");
-
-			in.close();
-			out.close();
-			socket.close();
-			server.removerConnection(this);
 		} catch (Exception e) {
 			logger.severe("Error sending information to client");
 			e.printStackTrace();
+		} finally {
+			if (server != null) {
+				server.removerConnection(this);
+			}
 		}
 	}
 

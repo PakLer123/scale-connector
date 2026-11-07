@@ -1,2 +1,22 @@
-.metadata/
+# Build output
+build/
+out/
+bin/
 *.class
+
+# Gradle
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE files
+.idea/
+*.iml
+.metadata/
+.classpath
+.project
+.settings/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db

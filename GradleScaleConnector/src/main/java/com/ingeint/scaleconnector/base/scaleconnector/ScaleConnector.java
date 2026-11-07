@@ -27,6 +27,7 @@ package com.ingeint.scaleconnector.base.scaleconnector;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 import com.fazecast.jSerialComm.SerialPort;
@@ -78,6 +79,8 @@ public class ScaleConnector {
 	private int endCutPosition;
 	
 	private SerialPort port;
+	private Consumer<String> warningHandler = message ->
+			JOptionPane.showMessageDialog(null, message, "Warning", JOptionPane.WARNING_MESSAGE);
 
 	public int getStabilityValue() {
 		return stabilityValue;
@@ -307,6 +310,14 @@ public class ScaleConnector {
 	 *            Parity
 	 */
 	public ScaleConnector(String serialPort, int baud, int dataBits, int stopBits, int parity, char startCharacter, char endCharacter) {
+		this(SerialPort.getCommPort(serialPort), serialPort, baud, dataBits, stopBits, parity, startCharacter, endCharacter);
+	}
+
+	/**
+	 * Same as the public constructor, but uses the given port instead of
+	 * looking it up by name. Used by tests to inject a mock port.
+	 */
+	ScaleConnector(SerialPort port, String serialPort, int baud, int dataBits, int stopBits, int parity, char startCharacter, char endCharacter) {
 		timeout = 5000;
 		byteCount = 9;
 		this.startCharacter = startCharacter;
@@ -323,11 +334,22 @@ public class ScaleConnector {
 		this.stopBits = stopBits;
 		this.parity = parity;
 		this.serialPort = serialPort;
-		port = SerialPort.getCommPort(serialPort);
+		this.port = port;
         port.setComPortParameters(baud, dataBits, stopBits, parity);
         port.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, timeout, timeout);
         
     }
+
+	/**
+	 * Set how warnings (port cannot be opened, no data read) are reported.
+	 * Defaults to a Swing dialog; console mode and tests can replace it.
+	 *
+	 * @param warningHandler
+	 *            Receives the warning message
+	 */
+	public void setWarningHandler(Consumer<String> warningHandler) {
+		this.warningHandler = warningHandler;
+	}
 
 	/**
 	 * Processes the input string to extract a value between the specified start and end characters.
@@ -342,15 +364,12 @@ public class ScaleConnector {
 
 	    try {
 	        // Log configurations
-	        log.info("Configured start character: " + (char) startCharacter + " (" + startCharacter + ")");
-	        log.info("Configured end character: " + (char) endCharacter + " (" + endCharacter + ")");
+	        log.info("Configured start character: " + AsciiTranslator.getAsciiMnemonic(startCharacter) + " (" + (int) startCharacter + ")");
+	        log.info("Configured end character: " + AsciiTranslator.getAsciiMnemonic(endCharacter) + " (" + (int) endCharacter + ")");
 
 	        // Find positions of start and end characters
-//	        int startIdx = string.indexOf((char) startCharacter);
-//	        int endIdx = string.lastIndexOf((char) endCharacter);
-        	
-	        int startIdx = string.indexOf((char) 2);
-	        int endIdx = string.lastIndexOf((char) 3);
+	        int startIdx = string.indexOf(startCharacter);
+	        int endIdx = string.lastIndexOf(endCharacter);
 	        
 	        log.info("Start character index: " + startIdx);
 	        log.info("End character index: " + endIdx);
@@ -430,7 +449,7 @@ public class ScaleConnector {
 	                continue;
 	            }
 
-	            frequencyMap.put(processedValue, frequencyMap.getOrDefault(processedValue, 0) + 1);
+	            frequencyMap.merge(processedValue, 1, Integer::sum);
 	        }
 
 	        // Determine the most frequent value
@@ -444,11 +463,6 @@ public class ScaleConnector {
 	                mostFrequentValue = entry.getKey();
 	            }
 	        }
-	        System.out.println(!mostFrequentValue.isEmpty());
-	        System.out.println(mostFrequentValue.toString());
-	        System.out.println(maxFrequency);
-	        System.out.println(stabilityValue);
-	        System.out.println(maxFrequency == stabilityValue);
 	        isStableValue = !mostFrequentValue.isEmpty() && maxFrequency == stabilityValue;
 	        return mostFrequentValue.isEmpty() ? "" : mostFrequentValue.substring(1);
 
@@ -501,13 +515,13 @@ public class ScaleConnector {
 	        sp.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, timeout, timeout);
 	        // Open the port if not already open
 	        if (!sp.openPort()) {
-				JOptionPane.showMessageDialog(null, "Unable to open port: " + serialPort, "Warning", JOptionPane.WARNING_MESSAGE);
+				warningHandler.accept("Unable to open port: " + serialPort);
 	            throw new Exception("Unable to open port: " + serialPort);
 	        }
 	        int bytesRead = sp.readBytes(buffer, buffer.length);
 	        if (bytesRead <= 0) {
 	            log.warning("No data read from port.");
-				JOptionPane.showMessageDialog(null, "No data read from port.", "Warning", JOptionPane.WARNING_MESSAGE);
+				warningHandler.accept("No data read from port.");
 	            return new byte[0]; // Return an empty byte array if no data is read
 	        }
 	        // Log raw data and interpret ASCII control characters

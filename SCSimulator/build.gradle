@@ -5,20 +5,28 @@ plugins {
 
 group = 'simulator'
 version = '1.0-SNAPSHOT'
-application{
-    mainClass = 'simulator.SimulatorGUI'
-}
+
 repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation 'com.fazecast:jSerialComm:2.9.3'
-    implementation 'com.formdev:flatlaf:2.0'
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
 }
 
-test {
-    useJUnitPlatform()
+application {
+    mainClass = 'simulator.SimulatorGUI'
+    // jSerialComm loads a native library; allow it without warnings on Java 24+
+    applicationDefaultJvmArgs = ['--enable-native-access=ALL-UNNAMED']
+}
+
+dependencies {
+    implementation 'com.fazecast:jSerialComm:2.11.4'
+    implementation 'com.formdev:flatlaf:3.8'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ['-Xlint:deprecation', '-Xlint:removal']
 }

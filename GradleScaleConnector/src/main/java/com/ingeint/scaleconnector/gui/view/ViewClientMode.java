@@ -231,11 +231,11 @@ public class ViewClientMode extends JFrame {
 
 		lblStartCharacter = new JLabel(SCUILocale.get("ViewServerMode.lblStartCharacter"));
 		txtStartCharacter = new JTextField();
-		txtStartCharacter.setText("+");
+		txtStartCharacter.setText("STX");
 
 		lblEndCharacter = new JLabel(SCUILocale.get("ViewServerMode.lblEndCharacter"));
 		txtEndCharacter = new JTextField();
-		txtEndCharacter.setText("B");
+		txtEndCharacter.setText("ETX");
 
 		lblByteCount = new JLabel(SCUILocale.get("ViewServerMode.lblByteCount"));
 		txtByteCount = new JIntegerField();
