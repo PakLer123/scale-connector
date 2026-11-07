@@ -87,8 +87,8 @@ public class ResponseBuilder {
 		        int stabilityValuePosition = Integer.parseInt(parameters.get("stabilitypos").trim());
 		        int floatingPoint = Integer.parseInt(parameters.get("floatingpoint").trim());
 
-		        char startCharText = parameters.get("startcharacter").charAt(0);
-		        char endCharText = parameters.get("endcharacter").charAt(0);
+		        char startCharText = AsciiTranslator.parseCharacter(parameters.get("startcharacter"));
+		        char endCharText = AsciiTranslator.parseCharacter(parameters.get("endcharacter"));
 
 		        // Open ScaleConnector
 		        ScaleConnector scaleConnector = new ScaleConnector(serialPort, baud, dataBits, stopBits, parity, startCharText, endCharText);

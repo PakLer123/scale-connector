@@ -231,12 +231,8 @@ public class ControllerViewServerMode implements ActionListener, WindowListener 
 	                int endCut = viewServerMode.getTxtEndCutPosition().getInteger();
 
 	                // Handle start and end characters
-	                String startCharString = viewServerMode.getTxtStartCharacter().getText().toString();
-	                System.out.println("startCharString:" + startCharString);
-	                char startCharText = viewServerMode.getTxtStartCharacter().getText().charAt(0);
-	                System.out.println("startchartext = "+ startCharText);
-	                char endCharText = viewServerMode.getTxtEndCharacter().getText().charAt(0);
-                	System.out.println("endchartext = " + endCharText);
+	                char startCharText = AsciiTranslator.parseCharacter(viewServerMode.getTxtStartCharacter().getText());
+	                char endCharText = AsciiTranslator.parseCharacter(viewServerMode.getTxtEndCharacter().getText());
 	                // Set values to save
 					SCUIFeature.set("DEFAULT_PARITY", viewServerMode.getTxtParity().getText().trim());
 					SCUIFeature.set("DEFAULT_STOPBITS", viewServerMode.getTxtStopBits().getText().trim());

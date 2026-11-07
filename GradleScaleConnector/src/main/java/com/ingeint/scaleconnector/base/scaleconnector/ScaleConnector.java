@@ -364,15 +364,12 @@ public class ScaleConnector {
 
 	    try {
 	        // Log configurations
-	        log.info("Configured start character: " + (char) startCharacter + " (" + startCharacter + ")");
-	        log.info("Configured end character: " + (char) endCharacter + " (" + endCharacter + ")");
+	        log.info("Configured start character: " + AsciiTranslator.getAsciiMnemonic(startCharacter) + " (" + (int) startCharacter + ")");
+	        log.info("Configured end character: " + AsciiTranslator.getAsciiMnemonic(endCharacter) + " (" + (int) endCharacter + ")");
 
 	        // Find positions of start and end characters
-//	        int startIdx = string.indexOf((char) startCharacter);
-//	        int endIdx = string.lastIndexOf((char) endCharacter);
-        	
-	        int startIdx = string.indexOf((char) 2);
-	        int endIdx = string.lastIndexOf((char) 3);
+	        int startIdx = string.indexOf(startCharacter);
+	        int endIdx = string.lastIndexOf(endCharacter);
 	        
 	        log.info("Start character index: " + startIdx);
 	        log.info("End character index: " + endIdx);

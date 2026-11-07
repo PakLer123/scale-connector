@@ -164,11 +164,11 @@ public class ControllerViewClientMode implements ActionListener, WindowListener 
         String endCharacter = SCUIFeature.get("DEFAULT_ENDCHARACTER");
         
         if (startCharacter == null || startCharacter.isEmpty()) {
-            startCharacter = "0"; // Default start character
+            startCharacter = "2"; // Default start character (STX)
             logger.warning("Start character is empty. Defaulting to: " + startCharacter);
         }
         if (endCharacter == null || endCharacter.isEmpty()) {
-            endCharacter = "1"; // Default end character
+            endCharacter = "3"; // Default end character (ETX)
             logger.warning("End character is empty. Defaulting to: " + endCharacter);
         }
 

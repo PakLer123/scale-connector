@@ -41,6 +41,7 @@ import jline.ConsoleReader;
 import com.fazecast.jSerialComm.*;
 
 import com.ingeint.scaleconnector.base.scaleconnector.ScaleConnector;
+import com.ingeint.scaleconnector.base.util.AsciiTranslator;
 import com.ingeint.scaleconnector.gui.console.ConsoleServerMode;
 import com.ingeint.scaleconnector.gui.controller.ControllerViewSelectMode;
 import com.ingeint.scaleconnector.gui.feature.SCUIFeature;
@@ -50,6 +51,15 @@ import com.ingeint.scaleconnector.gui.theme.CustomFlatLaf;
 public class Main {
 
     private static Logger logger = Logger.getLogger(Main.class.getName());
+
+    private static boolean isValidCharacter(String text) {
+        try {
+            AsciiTranslator.parseCharacter(text);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
 
     private static void commandVersion() {
         System.out.println(String.format("%s %s", SCUIFeature.get("APP_NAME"), SCUIFeature.get("VERSION")));
@@ -145,8 +155,8 @@ public class Main {
                 temp = console.readLine(String.format("Start Character (%s): ", SCUIFeature.get("DEFAULT_STARTCHARACTER")));
                 if (temp.trim().isEmpty()) {
                     readNext = true;
-                } else if (!temp.matches("[0-9]+")) {
-                    System.out.println("Input must be numbers");
+                } else if (!isValidCharacter(temp)) {
+                    System.out.println("Input must be a character code (2), a name (STX) or a single character");
                     readNext = false;
                 } else {
                     readNext = true;
@@ -158,8 +168,8 @@ public class Main {
                 temp = console.readLine(String.format("End Character (%s): ", SCUIFeature.get("DEFAULT_ENDCHARACTER")));
                 if (temp.trim().isEmpty()) {
                     readNext = true;
-                } else if (!temp.matches("[0-9]+")) {
-                    System.out.println("Input must be numbers");
+                } else if (!isValidCharacter(temp)) {
+                    System.out.println("Input must be a character code (2), a name (STX) or a single character");
                     readNext = false;
                 } else {
                     readNext = true;
@@ -277,8 +287,8 @@ public class Main {
         int byteCount = Integer.parseInt(SCUIFeature.get("DEFAULT_BYTECOUNT").trim());
         int readings = Integer.parseInt(SCUIFeature.get("DEFAULT_READINGS").trim());
         String serialPort = SCUIFeature.get("DEFAULT_SERIALPORT");
-        char startCharacter = SCUIFeature.get("DEFAULT_STARTCHARACTER").trim().charAt(0);
-        char endCharacter = SCUIFeature.get("DEFAULT_ENDCHARACTER").trim().charAt(0);
+        char startCharacter = AsciiTranslator.parseCharacter(SCUIFeature.get("DEFAULT_STARTCHARACTER"));
+        char endCharacter = AsciiTranslator.parseCharacter(SCUIFeature.get("DEFAULT_ENDCHARACTER"));
         int startCut = Integer.parseInt(SCUIFeature.get("DEFAULT_STARTCUT"));
         int endCut = Integer.parseInt(SCUIFeature.get("DEFAULT_ENDCUT"));
         int sIndicatorPos = Integer.parseInt(SCUIFeature.get("DEFAULT_SINDICATORPOS"));

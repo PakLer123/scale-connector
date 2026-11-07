@@ -110,6 +110,24 @@ public class ScaleConnectorTest {
     }
 
     @Test
+    void readValueUsesConfiguredStartAndEndCharacters() {
+        portSends("junk+001250Bjunk");
+        scaleConnector.setStartCharacter('+');
+        scaleConnector.setEndCharacter('B');
+
+        assertEquals("001250", scaleConnector.readValue());
+    }
+
+    @Test
+    void readValueIgnoresStxEtxWhenOtherCharactersAreConfigured() {
+        portSends(frame("100"));
+        scaleConnector.setStartCharacter('+');
+        scaleConnector.setEndCharacter('B');
+
+        assertEquals("", scaleConnector.readValue());
+    }
+
+    @Test
     void readValueAppliesFloatingPoint() {
         portSends(frame("+001250"));
         scaleConnector.setStartCutPosition(2);
